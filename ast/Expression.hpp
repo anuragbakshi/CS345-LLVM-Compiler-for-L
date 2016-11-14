@@ -1,6 +1,7 @@
 #ifndef EXPRESSION_H_
 #define EXPRESSION_H_
 
+
 #include <assert.h>
 #include <iostream>
 #include <map>
@@ -22,8 +23,9 @@ struct exp_eq {
     bool operator()(const Expression *l1, const Expression *l2) const;
 };
 }
+#ifndef __APPLE__
 using namespace __gnu_cxx;
-
+#endif
 enum expression_type {
     AST_BINOP,
     AST_IDENTIFIER,

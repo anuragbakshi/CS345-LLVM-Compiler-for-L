@@ -1,6 +1,11 @@
+OS = $(shell uname)
 CXX = c++
 CXXFLAGS = -g -Wall -std=c++1y
+ifeq ($(OS),Darwin)
+CXXLIBS = -ll -I-. -I./ast
+else
 CXXLIBS = -lfl -I-. -I./ast
+endif
 
 CPPFILES = $(shell find . -name '*.c*')
 OFILES = $(patsubst %.cpp, %.o, $(CPPFILES))
