@@ -4,24 +4,22 @@
 
 class Expression;
 class AstIdentifier;
-#include <vector>
 #include <map>
+#include <vector>
 
 using namespace std;
 
-
-
 class SymbolTable {
-private:
-	vector<map<AstIdentifier*, Expression*> > values;
-public:
-	SymbolTable();
-	void push();
-	void pop();
-	void add(AstIdentifier* id, Expression* e);
-	Expression* find(AstIdentifier* id);
-	void print_contents();
+  private:
+    vector<map<AstIdentifier *, Expression *>> values;
 
+  public:
+    SymbolTable();
+    void push();
+    void pop();
+    void add(AstIdentifier *id, Expression *e);
+    Expression *find(AstIdentifier *id);
+    void print_contents();
 };
 
 #endif /* SYMBOLTABLE_H_ */

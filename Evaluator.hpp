@@ -10,16 +10,16 @@ class AstExpressionList;
 #include "SymbolTable.hpp"
 
 class Evaluator {
-private:
-	SymbolTable sym_tab;
-	int c;
-public:
-	Evaluator();
-	Expression* eval(Expression* e);
-	Expression* eval_binop(AstBinOp* b);
-	Expression* eval_unop(AstUnOp* b);
-	Expression* eval_expression_list(AstExpressionList* l);
+  private:
+    SymbolTable sym_tab;
+    int c;
 
+  public:
+    Evaluator();
+    Expression *eval(Expression *e);
+    Expression *eval_binop(AstBinOp *b);
+    Expression *eval_unop(AstUnOp *b);
+    Expression *eval_expression_list(AstExpressionList *l);
 };
 
 #endif /* EVALUATOR_H_ */
