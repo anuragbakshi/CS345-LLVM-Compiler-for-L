@@ -1,10 +1,11 @@
 OS = $(shell uname)
 CXX = c++
-CXXFLAGS = -g -Wall -std=c++1y
 ifeq ($(OS),Darwin)
 CXXLIBS = -ll -I-. -I./ast
+CXXFLAGS = -g -Wall -std=c++1y -I/usr/local/Cellar/llvm/3.8.1/include -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS
 else
 CXXLIBS = -lfl -I-. -I./ast
+CXXFLAGS = -g -Wall -std=c++1y 
 endif
 
 CPPFILES = $(shell find . -name '*.c*')
