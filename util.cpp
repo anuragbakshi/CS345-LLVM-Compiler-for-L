@@ -2,7 +2,7 @@
 
 #include <llvm/Pass.h>
 #include <llvm/ADT/SmallVector.h>
-#include <llvm/Analysis/Verifier.h>
+#include <llvm/IR/Verifier.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/CallingConv.h>
 #include <llvm/IR/Constants.h>
@@ -18,21 +18,19 @@
 #include <llvm/Support/FormattedStream.h>
 #include <llvm/Support/MathExtras.h>
 #include <algorithm>
+using namespace llvm::legacy;
 using namespace llvm;
-
 Module* makeLLVMModule();
 
 int main(int argc, char**argv) {
   Module* Mod = makeLLVMModule();
-  verifyModule(*Mod, PrintMessageAction);
-  PassManager PM;
-  PM.add(createPrintModulePass(&outs()));
-  PM.run(*Mod);
+  Mod->dump();
   return 0;
 }
 
 
 Module* makeLLVMModule() {
+ //   printf("what\n");
  // Module Construction
  Module* mod = new Module("util.bc", getGlobalContext());
  mod->setDataLayout("");
@@ -628,7 +626,8 @@ ConstantInt* const_int64_41 = ConstantInt::get(mod->getContext(), APInt(64, Stri
 std::vector<Constant*> const_ptr_42_indices;
 const_ptr_42_indices.push_back(const_int32_39);
 const_ptr_42_indices.push_back(const_int32_39);
-Constant* const_ptr_42 = ConstantExpr::getGetElementPtr(gvar_array__str, const_ptr_42_indices);
+
+//Constant* const_ptr_42 = ConstantExpr::getGetElementPtr(IntegerType::get(mod->getContext(), 8) , gvar_array__str, ArrayRef<Constant*>(const_ptr_42_indices));
 ConstantPointerNull* const_ptr_43 = ConstantPointerNull::get(PointerTy_14);
 
 // Global Variable Definitions
@@ -639,7 +638,7 @@ gvar_array__str->setInitializer(const_array_34);
 // Function: error (func_error)
 {
  Function::arg_iterator args = func_error->arg_begin();
- Value* ptr_msg = args++;
+ Value* ptr_msg = &(*args++);
  ptr_msg->setName("msg");
  
  BasicBlock* label_44 = BasicBlock::Create(mod->getContext(), "",func_error,0);
@@ -863,9 +862,9 @@ ReturnInst::Create(mod->getContext(), ptr_88, label_70);
 // Function: add_str (func_add_str)
 {
  Function::arg_iterator args = func_add_str->arg_begin();
- Value* ptr_a = args++;
+ Value* ptr_a = &(*args++);
  ptr_a->setName("a");
- Value* ptr_b = args++;
+ Value* ptr_b = &(*args++);
  ptr_b->setName("b");
  
  BasicBlock* label_90 = BasicBlock::Create(mod->getContext(), "",func_add_str,0);
@@ -1095,9 +1094,9 @@ ReturnInst::Create(mod->getContext(), ptr_133, label_90);
 // Function: add_int (func_add_int)
 {
  Function::arg_iterator args = func_add_int->arg_begin();
- Value* ptr_a_135 = args++;
+ Value* ptr_a_135 = &(*args++);
  ptr_a_135->setName("a");
- Value* ptr_b_136 = args++;
+ Value* ptr_b_136 = &(*args++);
  ptr_b_136->setName("b");
  
  BasicBlock* label_137 = BasicBlock::Create(mod->getContext(), "",func_add_int,0);
@@ -1194,9 +1193,9 @@ ReturnInst::Create(mod->getContext(), ptr_165, label_137);
 // Function: add_any (func_add_any)
 {
  Function::arg_iterator args = func_add_any->arg_begin();
- Value* ptr_a_167 = args++;
+ Value* ptr_a_167 = &(*args++);
  ptr_a_167->setName("a");
- Value* ptr_b_168 = args++;
+ Value* ptr_b_168 = &(*args++);
  ptr_b_168->setName("b");
  
  BasicBlock* label_169 = BasicBlock::Create(mod->getContext(), "",func_add_any,0);
@@ -1309,12 +1308,12 @@ ReturnInst::Create(mod->getContext(), ptr_165, label_137);
  BranchInst::Create(label_178, label_174);
  
  // Block  (label_175)
- CallInst* void_218 = CallInst::Create(func_error, const_ptr_42, "", label_175);
+ /*CallInst* void_218 = CallInst::Create(func_error, const_ptr_42, "", label_175);
  void_218->setCallingConv(CallingConv::C);
  void_218->setTailCall(false);
  AttributeSet void_218_PAL;
  void_218->setAttributes(void_218_PAL);
- 
+ */
  BranchInst::Create(label_176, label_175);
  
  // Block  (label_176)
