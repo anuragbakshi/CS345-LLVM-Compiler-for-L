@@ -35,5 +35,8 @@ compiler: compiler.o
 run: compiler
 	/usr/local/Cellar/llvm/3.8.1/bin/lli <(./compiler 2>&1)
 
+util: util.o
+	$(CXX) $(CXXFLAGS) util.o -o util $(CXXLIBS)
+
 clean:
 	rm -f *.o ast/*.o parser.tab.* lex.yy.* parser.output llang *.ll
