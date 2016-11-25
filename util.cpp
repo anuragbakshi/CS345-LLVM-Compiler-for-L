@@ -2,7 +2,7 @@
 
 #include <llvm/Pass.h>
 #include <llvm/ADT/SmallVector.h>
-#include <llvm/Analysis/Verifier.h>
+#include <llvm/IR/Verifier.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/CallingConv.h>
 #include <llvm/IR/Constants.h>
@@ -17,17 +17,70 @@
 #include <llvm/IR/Module.h>
 #include <llvm/Support/FormattedStream.h>
 #include <llvm/Support/MathExtras.h>
+#include "llvm/IR/IRBuilder.h"
 #include <algorithm>
 using namespace llvm;
 
 Module* makeLLVMModule();
+Function* func_error ;
+Function* func_printf ;
+Function* func_exit ;
+Function* func_makeInt ;
+Function* func_malloc ;
+Function* func_makeString ;
+Function* func_makeList ;
+Function* func_readString ;
+Function* func_getline ;
+Function* func_readInt ;
+Function* func_atoi ;
+Function* func_add_str ;
+Function* func_strlen ;
+Function* func_strcpy ;
+Function* func_strcat ;
+Function* func_add_int ;
+Function* func_add_any ;
+Function* func_eq_int ;
+Function* func_eq_str ;
+Function* func_strcmp ;
+Function* func_eq_any ;
+Function* func_neq_int ;
+Function* func_neq_str ;
+Function* func_neq_any ;
+Function* func_sub_int ;
+Function* func_gt_int ;
+Function* func_geq_int ;
+Function* func_lt_int ;
+Function* func_leq_int ;
+Function* func_div_int ;
+Function* func_mul_int ;
+Function* func_and_int ;
+Function* func_or_int ;
+Function* func_sub_any ;
+Function* func_gt_any ;
+Function* func_geq_any ;
+Function* func_lt_any ;
+Function* func_leq_any ;
+Function* func_div_any ;
+Function* func_mul_any ;
+Function* func_and_any ;
+Function* func_or_any ;
+Function* func_cons_any ;
+Function* func_hd ;
+Function* func_tl ;
+Function* func_hd_any ;
+Function* func_tl_any ;
+Function* func_is_nil ;
+Function* func_print_int ;
+Function* func_print_str ;
+Function* func_print_list ;
+Function* func_free ;
+Function* func_print_any ;
+
+
 
 int main(int argc, char**argv) {
   Module* Mod = makeLLVMModule();
-  verifyModule(*Mod, PrintMessageAction);
-  PassManager PM;
-  PM.add(createPrintModulePass(&outs()));
-  PM.run(*Mod);
+  Mod->dump();
   return 0;
 }
 
@@ -37,6 +90,7 @@ Module* makeLLVMModule() {
  Module* mod = new Module("util.bc", getGlobalContext());
  mod->setDataLayout("");
  mod->setTargetTriple("x86_64-unknown-linux-gnu");
+ llvm::IRBuilder<> builder(getGlobalContext());
  
  // Type Definitions
  ArrayType* ArrayTy_0 = ArrayType::get(IntegerType::get(mod->getContext(), 8), 4);
@@ -49,6 +103,7 @@ Module* makeLLVMModule() {
  }
  std::vector<Type*>StructTy_struct__IO_FILE_fields;
  StructTy_struct__IO_FILE_fields.push_back(IntegerType::get(mod->getContext(), 32));
+ Type* IntTy_8 = IntegerType::get(mod->getContext(), 8);
  PointerType* PointerTy_4 = PointerType::get(IntegerType::get(mod->getContext(), 8), 0);
  
  StructTy_struct__IO_FILE_fields.push_back(PointerTy_4);
@@ -322,7 +377,7 @@ Module* makeLLVMModule() {
  
  // Function Declarations
  
- Function* func_error = mod->getFunction("error");
+ func_error = mod->getFunction("error");
  if (!func_error) {
  func_error = Function::Create(
   /*Type=*/FuncTy_24,
@@ -347,7 +402,7 @@ Module* makeLLVMModule() {
  }
  func_error->setAttributes(func_error_PAL);
  
- Function* func_printf = mod->getFunction("printf");
+ func_printf = mod->getFunction("printf");
  if (!func_printf) {
  func_printf = Function::Create(
   /*Type=*/FuncTy_27,
@@ -370,7 +425,7 @@ Module* makeLLVMModule() {
  }
  func_printf->setAttributes(func_printf_PAL);
  
- Function* func_exit = mod->getFunction("exit");
+ func_exit = mod->getFunction("exit");
  if (!func_exit) {
  func_exit = Function::Create(
   /*Type=*/FuncTy_29,
@@ -395,7 +450,7 @@ Module* makeLLVMModule() {
  }
  func_exit->setAttributes(func_exit_PAL);
  
- Function* func_makeInt = mod->getFunction("makeInt");
+ func_makeInt = mod->getFunction("makeInt");
  if (!func_makeInt) {
  func_makeInt = Function::Create(
   /*Type=*/FuncTy_31,
@@ -420,7 +475,7 @@ Module* makeLLVMModule() {
  }
  func_makeInt->setAttributes(func_makeInt_PAL);
  
- Function* func_malloc = mod->getFunction("malloc");
+ func_malloc = mod->getFunction("malloc");
  if (!func_malloc) {
  func_malloc = Function::Create(
   /*Type=*/FuncTy_35,
@@ -451,7 +506,7 @@ Module* makeLLVMModule() {
 }
 func_malloc->setAttributes(func_malloc_PAL);
 
-Function* func_makeString = mod->getFunction("makeString");
+func_makeString = mod->getFunction("makeString");
 if (!func_makeString) {
 func_makeString = Function::Create(
  /*Type=*/FuncTy_39,
@@ -476,7 +531,7 @@ AttributeSet func_makeString_PAL;
 }
 func_makeString->setAttributes(func_makeString_PAL);
 
-Function* func_makeList = mod->getFunction("makeList");
+func_makeList = mod->getFunction("makeList");
 if (!func_makeList) {
 func_makeList = Function::Create(
  /*Type=*/FuncTy_40,
@@ -501,7 +556,7 @@ AttributeSet func_makeList_PAL;
 }
 func_makeList->setAttributes(func_makeList_PAL);
 
-Function* func_readString = mod->getFunction("readString");
+func_readString = mod->getFunction("readString");
 if (!func_readString) {
 func_readString = Function::Create(
  /*Type=*/FuncTy_41,
@@ -526,7 +581,7 @@ AttributeSet func_readString_PAL;
 }
 func_readString->setAttributes(func_readString_PAL);
 
-Function* func_getline = mod->getFunction("getline");
+func_getline = mod->getFunction("getline");
 if (!func_getline) {
 func_getline = Function::Create(
  /*Type=*/FuncTy_43,
@@ -549,7 +604,7 @@ AttributeSet func_getline_PAL;
 }
 func_getline->setAttributes(func_getline_PAL);
 
-Function* func_readInt = mod->getFunction("readInt");
+func_readInt = mod->getFunction("readInt");
 if (!func_readInt) {
 func_readInt = Function::Create(
  /*Type=*/FuncTy_41,
@@ -574,7 +629,7 @@ AttributeSet func_readInt_PAL;
 }
 func_readInt->setAttributes(func_readInt_PAL);
 
-Function* func_atoi = mod->getFunction("atoi");
+func_atoi = mod->getFunction("atoi");
 if (!func_atoi) {
 func_atoi = Function::Create(
  /*Type=*/FuncTy_46,
@@ -599,7 +654,7 @@ AttributeSet func_atoi_PAL;
 }
 func_atoi->setAttributes(func_atoi_PAL);
 
-Function* func_add_str = mod->getFunction("add_str");
+func_add_str = mod->getFunction("add_str");
 if (!func_add_str) {
 func_add_str = Function::Create(
  /*Type=*/FuncTy_40,
@@ -624,7 +679,7 @@ AttributeSet func_add_str_PAL;
 }
 func_add_str->setAttributes(func_add_str_PAL);
 
-Function* func_strlen = mod->getFunction("strlen");
+func_strlen = mod->getFunction("strlen");
 if (!func_strlen) {
 func_strlen = Function::Create(
  /*Type=*/FuncTy_49,
@@ -649,7 +704,7 @@ AttributeSet func_strlen_PAL;
 }
 func_strlen->setAttributes(func_strlen_PAL);
 
-Function* func_strcpy = mod->getFunction("strcpy");
+func_strcpy = mod->getFunction("strcpy");
 if (!func_strcpy) {
 func_strcpy = Function::Create(
  /*Type=*/FuncTy_51,
@@ -673,7 +728,7 @@ AttributeSet func_strcpy_PAL;
 }
 func_strcpy->setAttributes(func_strcpy_PAL);
 
-Function* func_strcat = mod->getFunction("strcat");
+func_strcat = mod->getFunction("strcat");
 if (!func_strcat) {
 func_strcat = Function::Create(
  /*Type=*/FuncTy_51,
@@ -697,7 +752,7 @@ AttributeSet func_strcat_PAL;
 }
 func_strcat->setAttributes(func_strcat_PAL);
 
-Function* func_add_int = mod->getFunction("add_int");
+func_add_int = mod->getFunction("add_int");
 if (!func_add_int) {
 func_add_int = Function::Create(
  /*Type=*/FuncTy_40,
@@ -722,7 +777,7 @@ AttributeSet func_add_int_PAL;
 }
 func_add_int->setAttributes(func_add_int_PAL);
 
-Function* func_add_any = mod->getFunction("add_any");
+func_add_any = mod->getFunction("add_any");
 if (!func_add_any) {
 func_add_any = Function::Create(
  /*Type=*/FuncTy_40,
@@ -747,7 +802,7 @@ AttributeSet func_add_any_PAL;
 }
 func_add_any->setAttributes(func_add_any_PAL);
 
-Function* func_eq_int = mod->getFunction("eq_int");
+func_eq_int = mod->getFunction("eq_int");
 if (!func_eq_int) {
 func_eq_int = Function::Create(
  /*Type=*/FuncTy_40,
@@ -772,7 +827,7 @@ AttributeSet func_eq_int_PAL;
 }
 func_eq_int->setAttributes(func_eq_int_PAL);
 
-Function* func_eq_str = mod->getFunction("eq_str");
+func_eq_str = mod->getFunction("eq_str");
 if (!func_eq_str) {
 func_eq_str = Function::Create(
  /*Type=*/FuncTy_40,
@@ -797,7 +852,7 @@ AttributeSet func_eq_str_PAL;
 }
 func_eq_str->setAttributes(func_eq_str_PAL);
 
-Function* func_strcmp = mod->getFunction("strcmp");
+func_strcmp = mod->getFunction("strcmp");
 if (!func_strcmp) {
 func_strcmp = Function::Create(
  /*Type=*/FuncTy_55,
@@ -822,7 +877,7 @@ AttributeSet func_strcmp_PAL;
 }
 func_strcmp->setAttributes(func_strcmp_PAL);
 
-Function* func_eq_any = mod->getFunction("eq_any");
+func_eq_any = mod->getFunction("eq_any");
 if (!func_eq_any) {
 func_eq_any = Function::Create(
  /*Type=*/FuncTy_40,
@@ -847,7 +902,7 @@ AttributeSet func_eq_any_PAL;
 }
 func_eq_any->setAttributes(func_eq_any_PAL);
 
-Function* func_neq_int = mod->getFunction("neq_int");
+func_neq_int = mod->getFunction("neq_int");
 if (!func_neq_int) {
 func_neq_int = Function::Create(
  /*Type=*/FuncTy_40,
@@ -872,7 +927,7 @@ AttributeSet func_neq_int_PAL;
 }
 func_neq_int->setAttributes(func_neq_int_PAL);
 
-Function* func_neq_str = mod->getFunction("neq_str");
+func_neq_str = mod->getFunction("neq_str");
 if (!func_neq_str) {
 func_neq_str = Function::Create(
  /*Type=*/FuncTy_40,
@@ -897,7 +952,7 @@ AttributeSet func_neq_str_PAL;
 }
 func_neq_str->setAttributes(func_neq_str_PAL);
 
-Function* func_neq_any = mod->getFunction("neq_any");
+func_neq_any = mod->getFunction("neq_any");
 if (!func_neq_any) {
 func_neq_any = Function::Create(
  /*Type=*/FuncTy_40,
@@ -922,7 +977,7 @@ AttributeSet func_neq_any_PAL;
 }
 func_neq_any->setAttributes(func_neq_any_PAL);
 
-Function* func_sub_int = mod->getFunction("sub_int");
+func_sub_int = mod->getFunction("sub_int");
 if (!func_sub_int) {
 func_sub_int = Function::Create(
  /*Type=*/FuncTy_40,
@@ -947,7 +1002,7 @@ AttributeSet func_sub_int_PAL;
 }
 func_sub_int->setAttributes(func_sub_int_PAL);
 
-Function* func_gt_int = mod->getFunction("gt_int");
+func_gt_int = mod->getFunction("gt_int");
 if (!func_gt_int) {
 func_gt_int = Function::Create(
  /*Type=*/FuncTy_40,
@@ -972,7 +1027,7 @@ AttributeSet func_gt_int_PAL;
 }
 func_gt_int->setAttributes(func_gt_int_PAL);
 
-Function* func_geq_int = mod->getFunction("geq_int");
+func_geq_int = mod->getFunction("geq_int");
 if (!func_geq_int) {
 func_geq_int = Function::Create(
  /*Type=*/FuncTy_40,
@@ -997,7 +1052,7 @@ AttributeSet func_geq_int_PAL;
 }
 func_geq_int->setAttributes(func_geq_int_PAL);
 
-Function* func_lt_int = mod->getFunction("lt_int");
+func_lt_int = mod->getFunction("lt_int");
 if (!func_lt_int) {
 func_lt_int = Function::Create(
  /*Type=*/FuncTy_40,
@@ -1022,7 +1077,7 @@ AttributeSet func_lt_int_PAL;
 }
 func_lt_int->setAttributes(func_lt_int_PAL);
 
-Function* func_leq_int = mod->getFunction("leq_int");
+func_leq_int = mod->getFunction("leq_int");
 if (!func_leq_int) {
 func_leq_int = Function::Create(
  /*Type=*/FuncTy_40,
@@ -1047,7 +1102,7 @@ AttributeSet func_leq_int_PAL;
 }
 func_leq_int->setAttributes(func_leq_int_PAL);
 
-Function* func_div_int = mod->getFunction("div_int");
+func_div_int = mod->getFunction("div_int");
 if (!func_div_int) {
 func_div_int = Function::Create(
  /*Type=*/FuncTy_40,
@@ -1072,7 +1127,7 @@ AttributeSet func_div_int_PAL;
 }
 func_div_int->setAttributes(func_div_int_PAL);
 
-Function* func_mul_int = mod->getFunction("mul_int");
+func_mul_int = mod->getFunction("mul_int");
 if (!func_mul_int) {
 func_mul_int = Function::Create(
  /*Type=*/FuncTy_40,
@@ -1097,7 +1152,7 @@ AttributeSet func_mul_int_PAL;
 }
 func_mul_int->setAttributes(func_mul_int_PAL);
 
-Function* func_and_int = mod->getFunction("and_int");
+func_and_int = mod->getFunction("and_int");
 if (!func_and_int) {
 func_and_int = Function::Create(
  /*Type=*/FuncTy_40,
@@ -1122,7 +1177,7 @@ AttributeSet func_and_int_PAL;
 }
 func_and_int->setAttributes(func_and_int_PAL);
 
-Function* func_or_int = mod->getFunction("or_int");
+func_or_int = mod->getFunction("or_int");
 if (!func_or_int) {
 func_or_int = Function::Create(
  /*Type=*/FuncTy_40,
@@ -1147,7 +1202,7 @@ AttributeSet func_or_int_PAL;
 }
 func_or_int->setAttributes(func_or_int_PAL);
 
-Function* func_sub_any = mod->getFunction("sub_any");
+func_sub_any = mod->getFunction("sub_any");
 if (!func_sub_any) {
 func_sub_any = Function::Create(
  /*Type=*/FuncTy_40,
@@ -1172,7 +1227,7 @@ AttributeSet func_sub_any_PAL;
 }
 func_sub_any->setAttributes(func_sub_any_PAL);
 
-Function* func_gt_any = mod->getFunction("gt_any");
+func_gt_any = mod->getFunction("gt_any");
 if (!func_gt_any) {
 func_gt_any = Function::Create(
  /*Type=*/FuncTy_40,
@@ -1197,7 +1252,7 @@ AttributeSet func_gt_any_PAL;
 }
 func_gt_any->setAttributes(func_gt_any_PAL);
 
-Function* func_geq_any = mod->getFunction("geq_any");
+func_geq_any = mod->getFunction("geq_any");
 if (!func_geq_any) {
 func_geq_any = Function::Create(
  /*Type=*/FuncTy_40,
@@ -1222,7 +1277,7 @@ AttributeSet func_geq_any_PAL;
 }
 func_geq_any->setAttributes(func_geq_any_PAL);
 
-Function* func_lt_any = mod->getFunction("lt_any");
+func_lt_any = mod->getFunction("lt_any");
 if (!func_lt_any) {
 func_lt_any = Function::Create(
  /*Type=*/FuncTy_40,
@@ -1247,7 +1302,7 @@ AttributeSet func_lt_any_PAL;
 }
 func_lt_any->setAttributes(func_lt_any_PAL);
 
-Function* func_leq_any = mod->getFunction("leq_any");
+func_leq_any = mod->getFunction("leq_any");
 if (!func_leq_any) {
 func_leq_any = Function::Create(
  /*Type=*/FuncTy_40,
@@ -1272,7 +1327,7 @@ AttributeSet func_leq_any_PAL;
 }
 func_leq_any->setAttributes(func_leq_any_PAL);
 
-Function* func_div_any = mod->getFunction("div_any");
+func_div_any = mod->getFunction("div_any");
 if (!func_div_any) {
 func_div_any = Function::Create(
  /*Type=*/FuncTy_40,
@@ -1297,7 +1352,7 @@ AttributeSet func_div_any_PAL;
 }
 func_div_any->setAttributes(func_div_any_PAL);
 
-Function* func_mul_any = mod->getFunction("mul_any");
+func_mul_any = mod->getFunction("mul_any");
 if (!func_mul_any) {
 func_mul_any = Function::Create(
  /*Type=*/FuncTy_40,
@@ -1322,7 +1377,7 @@ AttributeSet func_mul_any_PAL;
 }
 func_mul_any->setAttributes(func_mul_any_PAL);
 
-Function* func_and_any = mod->getFunction("and_any");
+func_and_any = mod->getFunction("and_any");
 if (!func_and_any) {
 func_and_any = Function::Create(
  /*Type=*/FuncTy_40,
@@ -1347,7 +1402,7 @@ AttributeSet func_and_any_PAL;
 }
 func_and_any->setAttributes(func_and_any_PAL);
 
-Function* func_or_any = mod->getFunction("or_any");
+func_or_any = mod->getFunction("or_any");
 if (!func_or_any) {
 func_or_any = Function::Create(
  /*Type=*/FuncTy_40,
@@ -1372,7 +1427,7 @@ AttributeSet func_or_any_PAL;
 }
 func_or_any->setAttributes(func_or_any_PAL);
 
-Function* func_cons_any = mod->getFunction("cons_any");
+func_cons_any = mod->getFunction("cons_any");
 if (!func_cons_any) {
 func_cons_any = Function::Create(
  /*Type=*/FuncTy_40,
@@ -1397,7 +1452,7 @@ AttributeSet func_cons_any_PAL;
 }
 func_cons_any->setAttributes(func_cons_any_PAL);
 
-Function* func_hd = mod->getFunction("hd");
+func_hd = mod->getFunction("hd");
 if (!func_hd) {
 func_hd = Function::Create(
  /*Type=*/FuncTy_56,
@@ -1422,7 +1477,7 @@ AttributeSet func_hd_PAL;
 }
 func_hd->setAttributes(func_hd_PAL);
 
-Function* func_tl = mod->getFunction("tl");
+func_tl = mod->getFunction("tl");
 if (!func_tl) {
 func_tl = Function::Create(
  /*Type=*/FuncTy_56,
@@ -1447,7 +1502,7 @@ AttributeSet func_tl_PAL;
 }
 func_tl->setAttributes(func_tl_PAL);
 
-Function* func_hd_any = mod->getFunction("hd_any");
+func_hd_any = mod->getFunction("hd_any");
 if (!func_hd_any) {
 func_hd_any = Function::Create(
  /*Type=*/FuncTy_56,
@@ -1472,7 +1527,7 @@ AttributeSet func_hd_any_PAL;
 }
 func_hd_any->setAttributes(func_hd_any_PAL);
 
-Function* func_tl_any = mod->getFunction("tl_any");
+func_tl_any = mod->getFunction("tl_any");
 if (!func_tl_any) {
 func_tl_any = Function::Create(
  /*Type=*/FuncTy_56,
@@ -1497,7 +1552,7 @@ AttributeSet func_tl_any_PAL;
 }
 func_tl_any->setAttributes(func_tl_any_PAL);
 
-Function* func_is_nil = mod->getFunction("is_nil");
+func_is_nil = mod->getFunction("is_nil");
 if (!func_is_nil) {
 func_is_nil = Function::Create(
  /*Type=*/FuncTy_56,
@@ -1522,7 +1577,7 @@ AttributeSet func_is_nil_PAL;
 }
 func_is_nil->setAttributes(func_is_nil_PAL);
 
-Function* func_print_int = mod->getFunction("print_int");
+func_print_int = mod->getFunction("print_int");
 if (!func_print_int) {
 func_print_int = Function::Create(
  /*Type=*/FuncTy_56,
@@ -1547,7 +1602,7 @@ AttributeSet func_print_int_PAL;
 }
 func_print_int->setAttributes(func_print_int_PAL);
 
-Function* func_print_str = mod->getFunction("print_str");
+func_print_str = mod->getFunction("print_str");
 if (!func_print_str) {
 func_print_str = Function::Create(
  /*Type=*/FuncTy_56,
@@ -1572,7 +1627,7 @@ AttributeSet func_print_str_PAL;
 }
 func_print_str->setAttributes(func_print_str_PAL);
 
-Function* func_print_list = mod->getFunction("print_list");
+func_print_list = mod->getFunction("print_list");
 if (!func_print_list) {
 func_print_list = Function::Create(
  /*Type=*/FuncTy_56,
@@ -1597,7 +1652,7 @@ AttributeSet func_print_list_PAL;
 }
 func_print_list->setAttributes(func_print_list_PAL);
 
-Function* func_free = mod->getFunction("free");
+func_free = mod->getFunction("free");
 if (!func_free) {
 func_free = Function::Create(
  /*Type=*/FuncTy_24,
@@ -1621,7 +1676,7 @@ AttributeSet func_free_PAL;
 }
 func_free->setAttributes(func_free_PAL);
 
-Function* func_print_any = mod->getFunction("print_any");
+func_print_any = mod->getFunction("print_any");
 if (!func_print_any) {
 func_print_any = Function::Create(
  /*Type=*/FuncTy_56,
@@ -1646,31 +1701,6 @@ AttributeSet func_print_any_PAL;
 }
 func_print_any->setAttributes(func_print_any_PAL);
 
-Function* func_main = mod->getFunction("main");
-if (!func_main) {
-func_main = Function::Create(
- /*Type=*/FuncTy_58,
- /*Linkage=*/GlobalValue::ExternalLinkage,
- /*Name=*/"main", mod); 
-func_main->setCallingConv(CallingConv::C);
-}
-AttributeSet func_main_PAL;
-{
- SmallVector<AttributeSet, 4> Attrs;
- AttributeSet PAS;
-  {
-   AttrBuilder B;
-   B.addAttribute(Attribute::NoUnwind);
-   B.addAttribute(Attribute::UWTable);
-   PAS = AttributeSet::get(mod->getContext(), ~0U, B);
-  }
- 
- Attrs.push_back(PAS);
- func_main_PAL = AttributeSet::get(mod->getContext(), Attrs);
- 
-}
-func_main->setAttributes(func_main_PAL);
-
 // Global Variable Declarations
 
 
@@ -1682,13 +1712,13 @@ GlobalVariable* gvar_array__str = new GlobalVariable(/*Module=*/*mod,
 /*Name=*/".str");
 gvar_array__str->setAlignment(1);
 
-GlobalVariable* gvar_ptr_stdin = new GlobalVariable(/*Module=*/*mod, 
+GlobalVariable* gvar_ptr___stdinp = new GlobalVariable(/*Module=*/*mod, 
 /*Type=*/PointerTy_3,
 /*isConstant=*/false,
 /*Linkage=*/GlobalValue::ExternalLinkage,
 /*Initializer=*/0, 
-/*Name=*/"stdin");
-gvar_ptr_stdin->setAlignment(8);
+/*Name=*/"__stdinp");
+gvar_ptr___stdinp->setAlignment(8);
 
 GlobalVariable* gvar_array__str_1 = new GlobalVariable(/*Module=*/*mod, 
 /*Type=*/ArrayTy_8,
@@ -1787,7 +1817,7 @@ std::vector<Constant*> const_ptr_71_indices;
 ConstantInt* const_int32_72 = ConstantInt::get(mod->getContext(), APInt(32, StringRef("0"), 10));
 const_ptr_71_indices.push_back(const_int32_72);
 const_ptr_71_indices.push_back(const_int32_72);
-Constant* const_ptr_71 = ConstantExpr::getGetElementPtr(gvar_array__str, const_ptr_71_indices);
+Constant* const_ptr_71 = ConstantExpr::getGetElementPtr(ArrayTy_0 , gvar_array__str, makeArrayRef(const_ptr_71_indices));
 ConstantInt* const_int32_73 = ConstantInt::get(mod->getContext(), APInt(32, StringRef("-1"), 10));
 ConstantInt* const_int64_74 = ConstantInt::get(mod->getContext(), APInt(64, StringRef("16"), 10));
 ConstantInt* const_int32_75 = ConstantInt::get(mod->getContext(), APInt(32, StringRef("2"), 10));
@@ -1796,48 +1826,48 @@ ConstantInt* const_int64_77 = ConstantInt::get(mod->getContext(), APInt(64, Stri
 std::vector<Constant*> const_ptr_78_indices;
 const_ptr_78_indices.push_back(const_int32_72);
 const_ptr_78_indices.push_back(const_int32_72);
-Constant* const_ptr_78 = ConstantExpr::getGetElementPtr(gvar_array__str_1, const_ptr_78_indices);
+Constant* const_ptr_78 = ConstantExpr::getGetElementPtr(ArrayTy_8 ,gvar_array__str_1,makeArrayRef( const_ptr_78_indices));
 ConstantPointerNull* const_ptr_79 = ConstantPointerNull::get(PointerTy_30);
 ConstantInt* const_int1_80 = ConstantInt::get(mod->getContext(), APInt(1, StringRef("-1"), 10));
 std::vector<Constant*> const_ptr_81_indices;
 const_ptr_81_indices.push_back(const_int32_72);
 const_ptr_81_indices.push_back(const_int32_72);
-Constant* const_ptr_81 = ConstantExpr::getGetElementPtr(gvar_array__str_2, const_ptr_81_indices);
+Constant* const_ptr_81 = ConstantExpr::getGetElementPtr(ArrayTy_10,gvar_array__str_2,makeArrayRef( const_ptr_81_indices));
 ConstantInt* const_int64_82 = ConstantInt::get(mod->getContext(), APInt(64, StringRef("4"), 10));
 std::vector<Constant*> const_ptr_83_indices;
 const_ptr_83_indices.push_back(const_int32_72);
 const_ptr_83_indices.push_back(const_int32_72);
-Constant* const_ptr_83 = ConstantExpr::getGetElementPtr(gvar_array__str_3, const_ptr_83_indices);
+Constant* const_ptr_83 = ConstantExpr::getGetElementPtr(ArrayTy_12,gvar_array__str_3,makeArrayRef( const_ptr_83_indices));
 std::vector<Constant*> const_ptr_84_indices;
 const_ptr_84_indices.push_back(const_int32_72);
 const_ptr_84_indices.push_back(const_int32_72);
-Constant* const_ptr_84 = ConstantExpr::getGetElementPtr(gvar_array__str_4, const_ptr_84_indices);
+Constant* const_ptr_84 = ConstantExpr::getGetElementPtr(ArrayTy_14,gvar_array__str_4,makeArrayRef( const_ptr_84_indices));
 ConstantInt* const_int64_85 = ConstantInt::get(mod->getContext(), APInt(64, StringRef("0"), 10));
 std::vector<Constant*> const_ptr_86_indices;
 const_ptr_86_indices.push_back(const_int32_72);
 const_ptr_86_indices.push_back(const_int32_72);
-Constant* const_ptr_86 = ConstantExpr::getGetElementPtr(gvar_array__str_5, const_ptr_86_indices);
+Constant* const_ptr_86 = ConstantExpr::getGetElementPtr(ArrayTy_16,gvar_array__str_5,makeArrayRef( const_ptr_86_indices));
 std::vector<Constant*> const_ptr_87_indices;
 const_ptr_87_indices.push_back(const_int32_72);
 const_ptr_87_indices.push_back(const_int32_72);
-Constant* const_ptr_87 = ConstantExpr::getGetElementPtr(gvar_array__str_6, const_ptr_87_indices);
+Constant* const_ptr_87 = ConstantExpr::getGetElementPtr(ArrayTy_18,gvar_array__str_6,makeArrayRef( const_ptr_87_indices));
 std::vector<Constant*> const_ptr_88_indices;
 const_ptr_88_indices.push_back(const_int32_72);
 const_ptr_88_indices.push_back(const_int32_72);
-Constant* const_ptr_88 = ConstantExpr::getGetElementPtr(gvar_array__str_7, const_ptr_88_indices);
+Constant* const_ptr_88 = ConstantExpr::getGetElementPtr(ArrayTy_18,gvar_array__str_7,makeArrayRef( const_ptr_88_indices));
 std::vector<Constant*> const_ptr_89_indices;
 const_ptr_89_indices.push_back(const_int32_72);
 const_ptr_89_indices.push_back(const_int32_72);
-Constant* const_ptr_89 = ConstantExpr::getGetElementPtr(gvar_array__str_8, const_ptr_89_indices);
+Constant* const_ptr_89 = ConstantExpr::getGetElementPtr(ArrayTy_20,gvar_array__str_8,makeArrayRef( const_ptr_89_indices));
 ConstantInt* const_int32_90 = ConstantInt::get(mod->getContext(), APInt(32, StringRef("3"), 10));
 std::vector<Constant*> const_ptr_91_indices;
 const_ptr_91_indices.push_back(const_int32_72);
 const_ptr_91_indices.push_back(const_int32_72);
-Constant* const_ptr_91 = ConstantExpr::getGetElementPtr(gvar_array__str_9, const_ptr_91_indices);
+Constant* const_ptr_91 = ConstantExpr::getGetElementPtr(ArrayTy_22,gvar_array__str_9,makeArrayRef( const_ptr_91_indices));
 std::vector<Constant*> const_ptr_92_indices;
 const_ptr_92_indices.push_back(const_int32_72);
 const_ptr_92_indices.push_back(const_int32_72);
-Constant* const_ptr_92 = ConstantExpr::getGetElementPtr(gvar_array__str_10, const_ptr_92_indices);
+Constant* const_ptr_92 = ConstantExpr::getGetElementPtr(ArrayTy_0,gvar_array__str_10,makeArrayRef( const_ptr_92_indices));
 
 // Global Variable Definitions
 gvar_array__str->setInitializer(const_array_59);
@@ -1857,7 +1887,7 @@ gvar_array__str_10->setInitializer(const_array_69);
 // Function: error (func_error)
 {
  Function::arg_iterator args = func_error->arg_begin();
- Value* ptr_msg = args++;
+ Value* ptr_msg = &(*args++);
  ptr_msg->setName("msg");
  
  BasicBlock* label_93 = BasicBlock::Create(mod->getContext(), "",func_error,0);
@@ -1871,13 +1901,13 @@ gvar_array__str_10->setInitializer(const_array_69);
  LoadInst* ptr_97 = new LoadInst(ptr_95, "", false, label_93);
  ptr_97->setAlignment(8);
  std::vector<Value*> int32_98_params;
- int32_98_params.push_back(const_ptr_71);
+ //int32_98_params.push_back(const_ptr_71);
  int32_98_params.push_back(ptr_97);
  CallInst* int32_98 = CallInst::Create(func_printf, int32_98_params, "", label_93);
- int32_98->setCallingConv(CallingConv::C);
- int32_98->setTailCall(false);
+// int32_98->setCallingConv(CallingConv::C);
+// int32_98->setTailCall(false);
  AttributeSet int32_98_PAL;
- int32_98->setAttributes(int32_98_PAL);
+// int32_98->setAttributes(int32_98_PAL);
  
  CallInst* void_99 = CallInst::Create(func_exit, const_int32_73, "", label_93);
  void_99->setCallingConv(CallingConv::C);
@@ -1909,7 +1939,7 @@ gvar_array__str_10->setInitializer(const_array_69);
 // Function: makeInt (func_makeInt)
 {
  Function::arg_iterator args = func_makeInt->arg_begin();
- Value* int64_int_val = args++;
+ Value* int64_int_val = &(*args++);;
  int64_int_val->setName("int_val");
  
  BasicBlock* label_102 = BasicBlock::Create(mod->getContext(), "",func_makeInt,0);
@@ -1979,7 +2009,7 @@ ReturnInst::Create(mod->getContext(), ptr_117, label_102);
 // Function: makeString (func_makeString)
 {
  Function::arg_iterator args = func_makeString->arg_begin();
- Value* ptr_str = args++;
+ Value* ptr_str = &(*args++);;
  ptr_str->setName("str");
  
  BasicBlock* label_119 = BasicBlock::Create(mod->getContext(), "",func_makeString,0);
@@ -2049,9 +2079,9 @@ ReturnInst::Create(mod->getContext(), ptr_134, label_119);
 // Function: makeList (func_makeList)
 {
  Function::arg_iterator args = func_makeList->arg_begin();
- Value* ptr_hd = args++;
+ Value* ptr_hd = &(*args++);;
  ptr_hd->setName("hd");
- Value* ptr_tl = args++;
+ Value* ptr_tl = &(*args++);;
  ptr_tl->setName("tl");
  
  BasicBlock* label_136 = BasicBlock::Create(mod->getContext(), "",func_makeList,0);
@@ -2132,7 +2162,7 @@ ReturnInst::Create(mod->getContext(), ptr_154, label_136);
  // Block  (label_156)
  AllocaInst* ptr_input = new AllocaInst(PointerTy_4, "input", label_156);
  ptr_input->setAlignment(8);
- LoadInst* ptr_157 = new LoadInst(gvar_ptr_stdin, "", false, label_156);
+ LoadInst* ptr_157 = new LoadInst(gvar_ptr___stdinp, "", false, label_156);
  ptr_157->setAlignment(8);
  std::vector<Value*> int64_158_params;
  int64_158_params.push_back(ptr_input);
@@ -2164,7 +2194,7 @@ ReturnInst::Create(mod->getContext(), ptr_154, label_136);
  // Block  (label_162)
  AllocaInst* ptr_input_163 = new AllocaInst(PointerTy_4, "input", label_162);
  ptr_input_163->setAlignment(8);
- LoadInst* ptr_164 = new LoadInst(gvar_ptr_stdin, "", false, label_162);
+ LoadInst* ptr_164 = new LoadInst(gvar_ptr___stdinp, "", false, label_162);
  ptr_164->setAlignment(8);
  std::vector<Value*> int64_165_params;
  int64_165_params.push_back(ptr_input_163);
@@ -2212,9 +2242,9 @@ ReturnInst::Create(mod->getContext(), ptr_154, label_136);
 // Function: add_str (func_add_str)
 {
  Function::arg_iterator args = func_add_str->arg_begin();
- Value* ptr_a = args++;
+ Value* ptr_a = &(*args++);;
  ptr_a->setName("a");
- Value* ptr_b = args++;
+ Value* ptr_b = &(*args++);;
  ptr_b->setName("b");
  
  BasicBlock* label_171 = BasicBlock::Create(mod->getContext(), "",func_add_str,0);
@@ -2399,9 +2429,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: add_int (func_add_int)
 {
  Function::arg_iterator args = func_add_int->arg_begin();
- Value* ptr_a_205 = args++;
+ Value* ptr_a_205 = &(*args++);;
  ptr_a_205->setName("a");
- Value* ptr_b_206 = args++;
+ Value* ptr_b_206 = &(*args++);;
  ptr_b_206->setName("b");
  
  BasicBlock* label_207 = BasicBlock::Create(mod->getContext(), "",func_add_int,0);
@@ -2453,9 +2483,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: add_any (func_add_any)
 {
  Function::arg_iterator args = func_add_any->arg_begin();
- Value* ptr_a_225 = args++;
+ Value* ptr_a_225 = &(*args++);;
  ptr_a_225->setName("a");
- Value* ptr_b_226 = args++;
+ Value* ptr_b_226 = &(*args++);;
  ptr_b_226->setName("b");
  
  BasicBlock* label_227 = BasicBlock::Create(mod->getContext(), "",func_add_any,0);
@@ -2594,9 +2624,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: eq_int (func_eq_int)
 {
  Function::arg_iterator args = func_eq_int->arg_begin();
- Value* ptr_a_283 = args++;
+ Value* ptr_a_283 = &(*args++);;
  ptr_a_283->setName("a");
- Value* ptr_b_284 = args++;
+ Value* ptr_b_284 = &(*args++);;
  ptr_b_284->setName("b");
  
  BasicBlock* label_285 = BasicBlock::Create(mod->getContext(), "",func_eq_int,0);
@@ -2650,9 +2680,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: eq_str (func_eq_str)
 {
  Function::arg_iterator args = func_eq_str->arg_begin();
- Value* ptr_a_306 = args++;
+ Value* ptr_a_306 = &(*args++);;
  ptr_a_306->setName("a");
- Value* ptr_b_307 = args++;
+ Value* ptr_b_307 = &(*args++);;
  ptr_b_307->setName("b");
  
  BasicBlock* label_308 = BasicBlock::Create(mod->getContext(), "",func_eq_str,0);
@@ -2727,9 +2757,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: eq_any (func_eq_any)
 {
  Function::arg_iterator args = func_eq_any->arg_begin();
- Value* ptr_a_328 = args++;
+ Value* ptr_a_328 = &(*args++);;
  ptr_a_328->setName("a");
- Value* ptr_b_329 = args++;
+ Value* ptr_b_329 = &(*args++);;
  ptr_b_329->setName("b");
  
  BasicBlock* label_330 = BasicBlock::Create(mod->getContext(), "",func_eq_any,0);
@@ -2868,9 +2898,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: neq_int (func_neq_int)
 {
  Function::arg_iterator args = func_neq_int->arg_begin();
- Value* ptr_a_386 = args++;
+ Value* ptr_a_386 = &(*args++);;
  ptr_a_386->setName("a");
- Value* ptr_b_387 = args++;
+ Value* ptr_b_387 = &(*args++);;
  ptr_b_387->setName("b");
  
  BasicBlock* label_388 = BasicBlock::Create(mod->getContext(), "",func_neq_int,0);
@@ -2924,9 +2954,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: neq_str (func_neq_str)
 {
  Function::arg_iterator args = func_neq_str->arg_begin();
- Value* ptr_a_409 = args++;
+ Value* ptr_a_409 = &(*args++);;
  ptr_a_409->setName("a");
- Value* ptr_b_410 = args++;
+ Value* ptr_b_410 = &(*args++);;
  ptr_b_410->setName("b");
  
  BasicBlock* label_411 = BasicBlock::Create(mod->getContext(), "",func_neq_str,0);
@@ -3004,9 +3034,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: neq_any (func_neq_any)
 {
  Function::arg_iterator args = func_neq_any->arg_begin();
- Value* ptr_a_434 = args++;
+ Value* ptr_a_434 = &(*args++);;
  ptr_a_434->setName("a");
- Value* ptr_b_435 = args++;
+ Value* ptr_b_435 = &(*args++);;
  ptr_b_435->setName("b");
  
  BasicBlock* label_436 = BasicBlock::Create(mod->getContext(), "",func_neq_any,0);
@@ -3145,9 +3175,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: sub_int (func_sub_int)
 {
  Function::arg_iterator args = func_sub_int->arg_begin();
- Value* ptr_a_492 = args++;
+ Value* ptr_a_492 = &(*args++);;
  ptr_a_492->setName("a");
- Value* ptr_b_493 = args++;
+ Value* ptr_b_493 = &(*args++);;
  ptr_b_493->setName("b");
  
  BasicBlock* label_494 = BasicBlock::Create(mod->getContext(), "",func_sub_int,0);
@@ -3193,9 +3223,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: gt_int (func_gt_int)
 {
  Function::arg_iterator args = func_gt_int->arg_begin();
- Value* ptr_a_510 = args++;
+ Value* ptr_a_510 = &(*args++);;
  ptr_a_510->setName("a");
- Value* ptr_b_511 = args++;
+ Value* ptr_b_511 = &(*args++);;
  ptr_b_511->setName("b");
  
  BasicBlock* label_512 = BasicBlock::Create(mod->getContext(), "",func_gt_int,0);
@@ -3243,9 +3273,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: geq_int (func_geq_int)
 {
  Function::arg_iterator args = func_geq_int->arg_begin();
- Value* ptr_a_530 = args++;
+ Value* ptr_a_530 = &(*args++);;
  ptr_a_530->setName("a");
- Value* ptr_b_531 = args++;
+ Value* ptr_b_531 = &(*args++);;
  ptr_b_531->setName("b");
  
  BasicBlock* label_532 = BasicBlock::Create(mod->getContext(), "",func_geq_int,0);
@@ -3293,9 +3323,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: lt_int (func_lt_int)
 {
  Function::arg_iterator args = func_lt_int->arg_begin();
- Value* ptr_a_550 = args++;
+ Value* ptr_a_550 = &(*args++);;
  ptr_a_550->setName("a");
- Value* ptr_b_551 = args++;
+ Value* ptr_b_551 = &(*args++);;
  ptr_b_551->setName("b");
  
  BasicBlock* label_552 = BasicBlock::Create(mod->getContext(), "",func_lt_int,0);
@@ -3343,9 +3373,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: leq_int (func_leq_int)
 {
  Function::arg_iterator args = func_leq_int->arg_begin();
- Value* ptr_a_570 = args++;
+ Value* ptr_a_570 = &(*args++);;
  ptr_a_570->setName("a");
- Value* ptr_b_571 = args++;
+ Value* ptr_b_571 = &(*args++);;
  ptr_b_571->setName("b");
  
  BasicBlock* label_572 = BasicBlock::Create(mod->getContext(), "",func_leq_int,0);
@@ -3393,9 +3423,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: div_int (func_div_int)
 {
  Function::arg_iterator args = func_div_int->arg_begin();
- Value* ptr_a_590 = args++;
+ Value* ptr_a_590 = &(*args++);;
  ptr_a_590->setName("a");
- Value* ptr_b_591 = args++;
+ Value* ptr_b_591 = &(*args++);;
  ptr_b_591->setName("b");
  
  BasicBlock* label_592 = BasicBlock::Create(mod->getContext(), "",func_div_int,0);
@@ -3441,9 +3471,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: mul_int (func_mul_int)
 {
  Function::arg_iterator args = func_mul_int->arg_begin();
- Value* ptr_a_608 = args++;
+ Value* ptr_a_608 = &(*args++);;
  ptr_a_608->setName("a");
- Value* ptr_b_609 = args++;
+ Value* ptr_b_609 = &(*args++);;
  ptr_b_609->setName("b");
  
  BasicBlock* label_610 = BasicBlock::Create(mod->getContext(), "",func_mul_int,0);
@@ -3489,9 +3519,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: and_int (func_and_int)
 {
  Function::arg_iterator args = func_and_int->arg_begin();
- Value* ptr_a_626 = args++;
+ Value* ptr_a_626 = &(*args++);;
  ptr_a_626->setName("a");
- Value* ptr_b_627 = args++;
+ Value* ptr_b_627 = &(*args++);;
  ptr_b_627->setName("b");
  
  BasicBlock* label_628 = BasicBlock::Create(mod->getContext(), "",func_and_int,0);
@@ -3537,9 +3567,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: or_int (func_or_int)
 {
  Function::arg_iterator args = func_or_int->arg_begin();
- Value* ptr_a_644 = args++;
+ Value* ptr_a_644 = &(*args++);;
  ptr_a_644->setName("a");
- Value* ptr_b_645 = args++;
+ Value* ptr_b_645 = &(*args++);;
  ptr_b_645->setName("b");
  
  BasicBlock* label_646 = BasicBlock::Create(mod->getContext(), "",func_or_int,0);
@@ -3585,9 +3615,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: sub_any (func_sub_any)
 {
  Function::arg_iterator args = func_sub_any->arg_begin();
- Value* ptr_a_662 = args++;
+ Value* ptr_a_662 = &(*args++);;
  ptr_a_662->setName("a");
- Value* ptr_b_663 = args++;
+ Value* ptr_b_663 = &(*args++);;
  ptr_b_663->setName("b");
  
  BasicBlock* label_664 = BasicBlock::Create(mod->getContext(), "",func_sub_any,0);
@@ -3659,9 +3689,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: gt_any (func_gt_any)
 {
  Function::arg_iterator args = func_gt_any->arg_begin();
- Value* ptr_a_690 = args++;
+ Value* ptr_a_690 = &(*args++);;
  ptr_a_690->setName("a");
- Value* ptr_b_691 = args++;
+ Value* ptr_b_691 = &(*args++);;
  ptr_b_691->setName("b");
  
  BasicBlock* label_692 = BasicBlock::Create(mod->getContext(), "",func_gt_any,0);
@@ -3733,9 +3763,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: geq_any (func_geq_any)
 {
  Function::arg_iterator args = func_geq_any->arg_begin();
- Value* ptr_a_718 = args++;
+ Value* ptr_a_718 = &(*args++);;
  ptr_a_718->setName("a");
- Value* ptr_b_719 = args++;
+ Value* ptr_b_719 = &(*args++);;
  ptr_b_719->setName("b");
  
  BasicBlock* label_720 = BasicBlock::Create(mod->getContext(), "",func_geq_any,0);
@@ -3807,9 +3837,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: lt_any (func_lt_any)
 {
  Function::arg_iterator args = func_lt_any->arg_begin();
- Value* ptr_a_746 = args++;
+ Value* ptr_a_746 = &(*args++);;
  ptr_a_746->setName("a");
- Value* ptr_b_747 = args++;
+ Value* ptr_b_747 = &(*args++);;
  ptr_b_747->setName("b");
  
  BasicBlock* label_748 = BasicBlock::Create(mod->getContext(), "",func_lt_any,0);
@@ -3881,9 +3911,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: leq_any (func_leq_any)
 {
  Function::arg_iterator args = func_leq_any->arg_begin();
- Value* ptr_a_774 = args++;
+ Value* ptr_a_774 = &(*args++);;
  ptr_a_774->setName("a");
- Value* ptr_b_775 = args++;
+ Value* ptr_b_775 = &(*args++);;
  ptr_b_775->setName("b");
  
  BasicBlock* label_776 = BasicBlock::Create(mod->getContext(), "",func_leq_any,0);
@@ -3955,9 +3985,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: div_any (func_div_any)
 {
  Function::arg_iterator args = func_div_any->arg_begin();
- Value* ptr_a_802 = args++;
+ Value* ptr_a_802 = &(*args++);;
  ptr_a_802->setName("a");
- Value* ptr_b_803 = args++;
+ Value* ptr_b_803 = &(*args++);;
  ptr_b_803->setName("b");
  
  BasicBlock* label_804 = BasicBlock::Create(mod->getContext(), "",func_div_any,0);
@@ -4029,9 +4059,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: mul_any (func_mul_any)
 {
  Function::arg_iterator args = func_mul_any->arg_begin();
- Value* ptr_a_830 = args++;
+ Value* ptr_a_830 = &(*args++);;
  ptr_a_830->setName("a");
- Value* ptr_b_831 = args++;
+ Value* ptr_b_831 = &(*args++);;
  ptr_b_831->setName("b");
  
  BasicBlock* label_832 = BasicBlock::Create(mod->getContext(), "",func_mul_any,0);
@@ -4103,9 +4133,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: and_any (func_and_any)
 {
  Function::arg_iterator args = func_and_any->arg_begin();
- Value* ptr_a_858 = args++;
+ Value* ptr_a_858 = &(*args++);;
  ptr_a_858->setName("a");
- Value* ptr_b_859 = args++;
+ Value* ptr_b_859 = &(*args++);;
  ptr_b_859->setName("b");
  
  BasicBlock* label_860 = BasicBlock::Create(mod->getContext(), "",func_and_any,0);
@@ -4177,9 +4207,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: or_any (func_or_any)
 {
  Function::arg_iterator args = func_or_any->arg_begin();
- Value* ptr_a_886 = args++;
+ Value* ptr_a_886 = &(*args++);;
  ptr_a_886->setName("a");
- Value* ptr_b_887 = args++;
+ Value* ptr_b_887 = &(*args++);;
  ptr_b_887->setName("b");
  
  BasicBlock* label_888 = BasicBlock::Create(mod->getContext(), "",func_or_any,0);
@@ -4251,9 +4281,9 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: cons_any (func_cons_any)
 {
  Function::arg_iterator args = func_cons_any->arg_begin();
- Value* ptr_a_914 = args++;
+ Value* ptr_a_914 = &(*args++);;
  ptr_a_914->setName("a");
- Value* ptr_b_915 = args++;
+ Value* ptr_b_915 = &(*args++);;
  ptr_b_915->setName("b");
  
  BasicBlock* label_916 = BasicBlock::Create(mod->getContext(), "",func_cons_any,0);
@@ -4287,7 +4317,7 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: hd (func_hd)
 {
  Function::arg_iterator args = func_hd->arg_begin();
- Value* ptr_obj = args++;
+ Value* ptr_obj = &(*args++);;
  ptr_obj->setName("obj");
  
  BasicBlock* label_925 = BasicBlock::Create(mod->getContext(), "",func_hd,0);
@@ -4313,7 +4343,7 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: tl (func_tl)
 {
  Function::arg_iterator args = func_tl->arg_begin();
- Value* ptr_obj_933 = args++;
+ Value* ptr_obj_933 = &(*args++);;
  ptr_obj_933->setName("obj");
  
  BasicBlock* label_934 = BasicBlock::Create(mod->getContext(), "",func_tl,0);
@@ -4339,7 +4369,7 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: hd_any (func_hd_any)
 {
  Function::arg_iterator args = func_hd_any->arg_begin();
- Value* ptr_obj_942 = args++;
+ Value* ptr_obj_942 = &(*args++);;
  ptr_obj_942->setName("obj");
  
  BasicBlock* label_943 = BasicBlock::Create(mod->getContext(), "",func_hd_any,0);
@@ -4389,7 +4419,7 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: tl_any (func_tl_any)
 {
  Function::arg_iterator args = func_tl_any->arg_begin();
- Value* ptr_obj_960 = args++;
+ Value* ptr_obj_960 = &(*args++);;
  ptr_obj_960->setName("obj");
  
  BasicBlock* label_961 = BasicBlock::Create(mod->getContext(), "",func_tl_any,0);
@@ -4439,7 +4469,7 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: is_nil (func_is_nil)
 {
  Function::arg_iterator args = func_is_nil->arg_begin();
- Value* ptr_obj_978 = args++;
+ Value* ptr_obj_978 = &(*args++);;
  ptr_obj_978->setName("obj");
  
  BasicBlock* label_979 = BasicBlock::Create(mod->getContext(), "",func_is_nil,0);
@@ -4474,7 +4504,7 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: print_int (func_print_int)
 {
  Function::arg_iterator args = func_print_int->arg_begin();
- Value* ptr_obj_991 = args++;
+ Value* ptr_obj_991 = &(*args++);;
  ptr_obj_991->setName("obj");
  
  BasicBlock* label_992 = BasicBlock::Create(mod->getContext(), "",func_print_int,0);
@@ -4515,7 +4545,7 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: print_str (func_print_str)
 {
  Function::arg_iterator args = func_print_str->arg_begin();
- Value* ptr_obj_1002 = args++;
+ Value* ptr_obj_1002 = &(*args++);;
  ptr_obj_1002->setName("obj");
  
  BasicBlock* label_1003 = BasicBlock::Create(mod->getContext(), "",func_print_str,0);
@@ -4556,7 +4586,7 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: print_list (func_print_list)
 {
  Function::arg_iterator args = func_print_list->arg_begin();
- Value* ptr_t = args++;
+ Value* ptr_t = &(*args++);;
  ptr_t->setName("t");
  
  BasicBlock* label_1013 = BasicBlock::Create(mod->getContext(), "",func_print_list,0);
@@ -4682,7 +4712,7 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
 // Function: print_any (func_print_any)
 {
  Function::arg_iterator args = func_print_any->arg_begin();
- Value* ptr_obj_1043 = args++;
+ Value* ptr_obj_1043 = &(*args++);;
  ptr_obj_1043->setName("obj");
  
  BasicBlock* label_1044 = BasicBlock::Create(mod->getContext(), "",func_print_any,0);
@@ -4831,22 +4861,6 @@ ReturnInst::Create(mod->getContext(), ptr_203, label_171);
  LoadInst* ptr_1101 = new LoadInst(ptr_1054, "", false, label_1053);
  ptr_1101->setAlignment(8);
  ReturnInst::Create(mod->getContext(), ptr_1101, label_1053);
- 
-}
-
-// Function: main (func_main)
-{
- 
- BasicBlock* label_1103 = BasicBlock::Create(mod->getContext(), "",func_main,0);
- 
- // Block  (label_1103)
- CallInst* int32_1104 = CallInst::Create(func_printf, const_ptr_92, "", label_1103);
- int32_1104->setCallingConv(CallingConv::C);
- int32_1104->setTailCall(false);
- AttributeSet int32_1104_PAL;
- int32_1104->setAttributes(int32_1104_PAL);
- 
- ReturnInst::Create(mod->getContext(), const_int32_72, label_1103);
  
 }
 
