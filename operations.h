@@ -63,6 +63,7 @@ Object *print_any(Object *o);
 
 void display_int(Object *o);
 void display_str(Object *o);
+void display_any_noendl(Object *o);
 void display_any(Object *o);
 
 void error(char *s);

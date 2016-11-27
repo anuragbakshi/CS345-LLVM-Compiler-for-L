@@ -86,6 +86,8 @@ class Compiler {
     Compiler();
     void compile(Expression *root);
 
+    llvm::Value *codegen_error(Expression *e, char *s);
+
     llvm::Value *codegen_binop(AstBinOp *e);
     llvm::Value *codegen_branch(AstBranch *e);
     llvm::Value *codegen_expressionlist(AstExpressionList *e);

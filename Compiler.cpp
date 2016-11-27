@@ -86,6 +86,10 @@ void Compiler::compile(Expression *root) {
     module->dump();
 }
 
+llvm::Value *Compiler::codegen_error(Expression *e, char *s) {
+    // TODO: implement
+}
+
 llvm::Value *Compiler::codegen_binop(AstBinOp *e) {
     // std::cout << "\033[1;31mTODO:\033[0m codegen_binop" << std::endl;
     auto gen_first = codegen_expression(e->get_first());
@@ -105,8 +109,21 @@ llvm::Value *Compiler::codegen_binop(AstBinOp *e) {
 }
 
 llvm::Value *Compiler::codegen_branch(AstBranch *e) {
-    std::cout << "\033[1;31mTODO:\033[0m codegen_branch" << std::endl;
-    return nullptr;
+    // std::cout << "\033[1;31mTODO:\033[0m codegen_branch" << std::endl;
+    // return nullptr;
+
+    auto gen_pred = codegen_expression(e->get_pred());
+
+    // if (eval_pred->get_type() == AST_INT) {
+    //     auto bool_pred = static_cast<AstInt *>(eval_pred)->get_int() != 0;
+    //     res_exp = bool_pred ? eval(branch_e->get_then_exp())
+    //                         : eval(branch_e->get_else_exp());
+    // } else {
+    //     codegen_error(e, "Predicate in conditional must be an integer");
+    // }
+
+    // TODO: add assert_int function to operations.h
+
 }
 
 llvm::Value *Compiler::codegen_expressionlist(AstExpressionList *e) {
@@ -209,11 +226,13 @@ llvm::Value *Compiler::codegen_expression(Expression *e) {
         return codegen_int(static_cast<AstInt *>(e));
     }
 
-    // case AST_LAMBDA: {
-    //     res_exp = e;
-    //     break;
-    // }
-    //
+    case AST_LAMBDA: {
+        // res_exp = e;
+        // break;
+
+        return codegen_lambda(static_cast<AstLambda *>(e));
+    }
+
     // case AST_LET: {
     //     auto let = static_cast<AstLet *>(e);
     //     auto id = let->get_id();
@@ -251,47 +270,59 @@ llvm::Value *Compiler::codegen_expression(Expression *e) {
     //     res_exp = lambda;
     //     break;
     // }
-    //
-    // case AST_BRANCH: {
-    //     auto branch_e = static_cast<AstBranch *>(e);
-    //     auto eval_pred = eval(branch_e->get_pred());
-    //     if (eval_pred->get_type() == AST_INT) {
-    //         auto bool_pred = static_cast<AstInt *>(eval_pred)->get_int() != 0;
-    //         res_exp = bool_pred ? eval(branch_e->get_then_exp())
-    //                             : eval(branch_e->get_else_exp());
-    //     } else {
-    //         report_error(e, "Predicate in conditional must be an integer");
-    //     }
-    //     break;
-    // }
-    //
-    // case AST_NIL: {
-    //     res_exp = e;
-    //     break;
-    // }
-    //
-    // case AST_LIST: {
-    //     res_exp = e;
-    //     break;
-    // }
-    //
-    // case AST_UNOP: {
-    //     res_exp = eval_unop(static_cast<AstUnOp *>(e));
-    //     break;
-    // }
-    //
-    // case AST_READ: {
-    //     AstRead *r = static_cast<AstRead *>(e);
-    //     string input;
-    //     getline(cin, input);
-    //     if (r->read_integer()) {
-    //         return AstInt::make(string_to_int(input));
-    //     }
-    //
-    //     res_exp = AstString::make(input);
-    //
-    //     break;
-    // }
+
+    case AST_BRANCH: {
+        // auto branch_e = static_cast<AstBranch *>(e);
+        // auto eval_pred = eval(branch_e->get_pred());
+        // if (eval_pred->get_type() == AST_INT) {
+        //     auto bool_pred = static_cast<AstInt *>(eval_pred)->get_int() != 0;
+        //     res_exp = bool_pred ? eval(branch_e->get_then_exp())
+        //                         : eval(branch_e->get_else_exp());
+        // } else {
+        //     report_error(e, "Predicate in conditional must be an integer");
+        // }
+        // break;
+
+        return codegen_branch(static_cast<AstBranch *>(e));
+    }
+
+    case AST_NIL: {
+        // res_exp = e;
+        // break;
+
+        return codegen_nil(static_cast<AstNil *>(e));
+    }
+
+    // TODO: should never happen
+    case AST_LIST: {
+        // res_exp = e;
+        // break;
+
+        return codegen_list(static_cast<AstList *>(e));
+    }
+
+    case AST_UNOP: {
+        // res_exp = eval_unop(static_cast<AstUnOp *>(e));
+        // break;
+
+        return codegen_unop(static_cast<AstUnOp *>(e));
+    }
+
+    case AST_READ: {
+        // AstRead *r = static_cast<AstRead *>(e);
+        // string input;
+        // getline(cin, input);
+        // if (r->read_integer()) {
+        //     return AstInt::make(string_to_int(input));
+        // }
+        //
+        // res_exp = AstString::make(input);
+        //
+        // break;
+
+        return codegen_read(static_cast<AstRead *>(e));
+    }
+
     default:
         std::cout << "TODO: " << e->get_type() << std::endl;
     }

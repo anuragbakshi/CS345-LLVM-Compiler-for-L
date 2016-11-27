@@ -310,22 +310,52 @@ Object *print_any(Object *o) {
     return make_int(0);
 }
 
+void display_nil() {
+    printf("Nil");
+}
+
 void display_int(Object *o) {
-    printf("%lld\n", o->int_val);
+    printf("%lld", o->int_val);
 }
 
 void display_str(Object *o) {
-    printf("\"%s\"\n", o->str_ptr);
+    printf("\"%s\"", o->str_ptr);
+}
+
+void display_function(Object *o) {
+    error("TODO: not supported");
+}
+
+void display_list(Object *o) {
+    printf("[");
+
+    display_any_noendl(o->list_head);
+
+    if(!(o->list_tail->type == NIL && o->list_tail->nil_type == NIL)) {
+        printf(", ");
+        display_any_noendl(o->list_tail);
+    }
+
+    printf("]");
+}
+
+void display_any_noendl(Object *o) {
+    if(o->type == NIL && o->nil_type == NIL) {
+        display_nil();
+    } else if(o->type == INT) {
+        display_int(o);
+    } else if(o->type == STRING) {
+        display_str(o);
+    } else if(o->type == FUNCTION) {
+        display_function(o);
+    } else { // list
+        display_list(o);
+    }
 }
 
 void display_any(Object *o) {
-    if(o->type == INT) {
-        return display_int(o);
-    } else if(o->type == STRING) {
-        return display_str(o);
-    } else {
-        error("Binop can only be applied to expressions of same type");
-    }
+    display_any_noendl(o);
+    printf("\n");
 }
 
 void error(char *s) {
