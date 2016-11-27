@@ -36,9 +36,9 @@ Compiler::Compiler() :
 
     functype_make_int { llvm::FunctionType::get(ptr_struct_Object, { int_64 }, false) },
 
-    // functype_add_str { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
-    // functype_add_int { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
-    functype_add_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
+    // functype_plus_str { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
+    // functype_plus_int { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
+    functype_plus_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
     functype_print_any { llvm::FunctionType::get(builder.getVoidTy(), { ptr_struct_Object }, false) },
 
     // functions
@@ -47,9 +47,9 @@ Compiler::Compiler() :
 
     func_make_int { llvm::Function::Create(functype_make_int, llvm::Function::ExternalLinkage, "make_int", module) },
 
-    // func_add_str { llvm::Function::Create(functype_add_str, llvm::Function::ExternalLinkage, "add_str", module) },
-    // func_add_int { llvm::Function::Create(functype_add_int, llvm::Function::ExternalLinkage, "add_int", module) },
-    func_add_any { llvm::Function::Create(functype_add_any, llvm::Function::ExternalLinkage, "add_any", module) },
+    // func_plus_str { llvm::Function::Create(functype_plus_str, llvm::Function::ExternalLinkage, "plus_str", module) },
+    // func_plus_int { llvm::Function::Create(functype_plus_int, llvm::Function::ExternalLinkage, "plus_int", module) },
+    func_plus_any { llvm::Function::Create(functype_plus_any, llvm::Function::ExternalLinkage, "plus_any", module) },
     func_print_any { llvm::Function::Create(functype_print_any, llvm::Function::ExternalLinkage, "print_any", module) }
 {
     // builder.SetInsertPoint(entry);
@@ -60,14 +60,6 @@ Compiler::Compiler() :
     std::vector<llvm::Type *> struct_Object_fields { int_64, int_64 };
     struct_Object->setBody(struct_Func_fields);
 }
-
-// void Compiler::dump() {
-//     builder.CreateCall(func_print_any);
-//
-//     builder.CreateRet(llvm::ConstantInt::get(builder.getInt32Ty(), 0));
-//
-//     module->dump();
-// }
 
 void Compiler::compile(Expression *root) {
     builder.SetInsertPoint(entry);
@@ -86,8 +78,8 @@ llvm::Value *Compiler::codegen_binop(AstBinOp *e) {
     auto gen_second = codegen_expression(e->get_second());
 
     if(e->get_binop_type() == PLUS) {
-        // llvm::CallInst *call = CallInst::Create(func_add_any, args.begin(), args.end(), "", context.currentBlock());
-        auto call = llvm::CallInst::Create(func_add_any, { gen_first, gen_second }, "", entry);
+        // llvm::CallInst *call = CallInst::Create(func_plus_any, args.begin(), args.end(), "", context.currentBlock());
+        auto call = llvm::CallInst::Create(func_plus_any, { gen_first, gen_second }, "", entry);
 
         return call;
     }
@@ -199,7 +191,7 @@ llvm::Value *Compiler::codegen_expression(Expression *e) {
     //     auto let = static_cast<AstLet *>(e);
     //     auto id = let->get_id();
     //     sym_tab.push();
-    //     sym_tab.add(id, eval(let->get_val()));
+    //     sym_tab.plus(id, eval(let->get_val()));
     //     res_exp = eval(let->get_body());
     //     sym_tab.pop();
     //     break;

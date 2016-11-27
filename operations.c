@@ -27,7 +27,7 @@ Object *make_int(int64_t i) {
     return int_obj;
 }
 
-Object *add_str(Object *a, Object *b) {
+Object *plus_str(Object *a, Object *b) {
     Object *concat = NEW(Object);
     concat->type = STRING;
     concat->str_ptr = (char *) malloc(strlen(a->str_ptr) + strlen(b->str_ptr) + 1);
@@ -38,7 +38,7 @@ Object *add_str(Object *a, Object *b) {
     return concat;
 }
 
-Object *add_int(Object *a, Object *b) {
+Object *plus_int(Object *a, Object *b) {
     Object *sum = NEW(Object);
 
     sum->type = INT;
@@ -47,11 +47,11 @@ Object *add_int(Object *a, Object *b) {
     return sum;
 }
 
-Object *add_any(Object *a, Object *b) {
+Object *plus_any(Object *a, Object *b) {
     if(a->type == INT && b->type == INT) {
-        return add_int(a, b);
+        return plus_int(a, b);
     } else if(a->type == STRING && b->type == STRING) {
-        return add_str(a, b);
+        return plus_str(a, b);
     } else {
         // error("Binop can only be applied to expressions of same type");
     }
@@ -59,12 +59,57 @@ Object *add_any(Object *a, Object *b) {
     return NULL;
 }
 
+Object *minus_any(Object *a, Object *b) {
+}
+
+Object *times_any(Object *a, Object *b) {
+}
+
+Object *divide_any(Object *a, Object *b) {
+}
+
+Object *and_any(Object *a, Object *b) {
+}
+
+Object *or_any(Object *a, Object *b) {
+}
+
+Object *eq_any(Object *a, Object *b) {
+}
+
+Object *neq_any(Object *a, Object *b) {
+}
+
+Object *lt_any(Object *a, Object *b) {
+}
+
+Object *leq_any(Object *a, Object *b) {
+}
+
+Object *gt_any(Object *a, Object *b) {
+}
+
+Object *geq_any(Object *a, Object *b) {
+}
+
+Object *cons_any(Object *a, Object *b) {
+}
+
+Object *hd_any(Object *o) {
+}
+
+Object *tl_any(Object *o) {
+}
+
+Object *isnil_any(Object *o) {
+}
+
 void print_int(Object *o) {
     printf("%lld\n", o->int_val);
 }
 
 void print_str(Object *o) {
-    printf("%s\n", o->str_ptr);
+    printf("\"%s\"\n", o->str_ptr);
 }
 
 void print_any(Object *o) {
@@ -73,6 +118,13 @@ void print_any(Object *o) {
     } else if(o->type == STRING) {
         return print_str(o);
     } else {
-        // error("Binop can only be applied to expressions of same type");
+        error("Binop can only be applied to expressions of same type");
     }
+}
+
+void error(char *s) {
+    // cout << "Run-time error in expression " << e->to_value() << endl;
+    // cout << s << endl;
+    printf("%s\n", s);
+    exit(1);
 }

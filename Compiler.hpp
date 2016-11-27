@@ -45,9 +45,9 @@ class Compiler {
 
     llvm::FunctionType *functype_make_int;
 
-    // llvm::FunctionType *functype_add_str;
-    // llvm::FunctionType *functype_add_int;
-    llvm::FunctionType *functype_add_any;
+    // llvm::FunctionType *functype_plus_str;
+    // llvm::FunctionType *functype_plus_int;
+    llvm::FunctionType *functype_plus_any;
     llvm::FunctionType *functype_print_any;
 
     // functions
@@ -56,9 +56,9 @@ class Compiler {
 
     llvm::Function *func_make_int;
 
-    // llvm::Function *func_add_str;
-    // llvm::Function *func_add_int;
-    llvm::Function *func_add_any;
+    // llvm::Function *func_plus_str;
+    // llvm::Function *func_plus_int;
+    llvm::Function *func_plus_any;
     llvm::Function *func_print_any;
 
   public:
