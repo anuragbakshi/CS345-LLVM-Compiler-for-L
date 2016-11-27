@@ -39,6 +39,7 @@ Object *read_int();
 
 Object *make_int(int64_t i);
 Object *make_string(char *s);
+Object *make_nil();
 
 bool assert_predicate(Object *o);
 

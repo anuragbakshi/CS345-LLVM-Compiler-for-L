@@ -37,6 +37,7 @@ Compiler::Compiler() :
 
     functype_make_int { llvm::FunctionType::get(ptr_struct_Object, { int_64 }, false) },
     functype_make_string { llvm::FunctionType::get(ptr_struct_Object, { ptr_void }, false) },
+    functype_make_nil { llvm::FunctionType::get(ptr_struct_Object, false) },
 
     functype_assert_predicate { llvm::FunctionType::get(int_1, { ptr_struct_Object }, false) },
 
@@ -50,6 +51,7 @@ Compiler::Compiler() :
 
     func_make_int { llvm::Function::Create(functype_make_int, llvm::Function::ExternalLinkage, "make_int", module) },
     func_make_string { llvm::Function::Create(functype_make_string, llvm::Function::ExternalLinkage, "make_string", module) },
+    func_make_nil { llvm::Function::Create(functype_make_nil, llvm::Function::ExternalLinkage, "make_nil", module) },
 
     func_assert_predicate { llvm::Function::Create(functype_assert_predicate, llvm::Function::ExternalLinkage, "assert_predicate", module) },
 
@@ -180,8 +182,7 @@ llvm::Value *Compiler::codegen_list(AstList *e) {
 }
 
 llvm::Value *Compiler::codegen_nil(AstNil *e) {
-    std::cout << "\033[1;31mTODO:\033[0m codegen_nil" << std::endl;
-    return nullptr;
+    return llvm::CallInst::Create(func_make_nil, "", blocks.top());
 }
 
 llvm::Value *Compiler::codegen_read(AstRead *e) {

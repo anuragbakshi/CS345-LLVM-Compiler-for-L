@@ -44,7 +44,9 @@ Object *make_string(char *s) {
 Object *make_nil() {
     Object *nil_obj = NEW(Object);
     nil_obj->type = NIL;
-    nil_obj->int_val = NIL;
+    nil_obj->nil_type = NIL;
+
+    return nil_obj;
 }
 
 bool assert_predicate(Object *o) {
@@ -318,7 +320,7 @@ Object *tl_any(Object *o) {
 }
 
 Object *isnil_any(Object *o) {
-    return o->type == NIL && o->nil_type == NIL ? make_int(1) : make_int(0);
+    return (o->type == NIL && o->nil_type == NIL) ? make_int(1) : make_int(0);
 }
 
 Object *print_any(Object *o) {

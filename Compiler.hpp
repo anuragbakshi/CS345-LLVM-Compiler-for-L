@@ -50,6 +50,7 @@ class Compiler {
 
     llvm::FunctionType *functype_make_int;
     llvm::FunctionType *functype_make_string;
+    llvm::FunctionType *functype_make_nil;
 
     llvm::FunctionType *functype_assert_predicate;
 
@@ -64,6 +65,7 @@ class Compiler {
 
     llvm::Function *func_make_int;
     llvm::Function *func_make_string;
+    llvm::Function *func_make_nil;
 
     llvm::Function *func_assert_predicate;
 
