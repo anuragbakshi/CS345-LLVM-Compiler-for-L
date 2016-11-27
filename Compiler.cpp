@@ -156,7 +156,7 @@ llvm::Value *Compiler::codegen_identifier(AstIdentifier *e) {
 }
 
 llvm::Value *Compiler::codegen_identifierlist(AstIdentifierList *e) {
-    std::cout << "\033[1;31mTODO:\033[0m codegen_identifierlist" << std::endl;
+    // std::cout << "\033[1;31mTODO:\033[0m codegen_identifierlist" << std::endl;
     return nullptr;
 }
 
@@ -177,7 +177,7 @@ llvm::Value *Compiler::codegen_let(AstLet *e) {
 }
 
 llvm::Value *Compiler::codegen_list(AstList *e) {
-    std::cout << "\033[1;31mTODO:\033[0m codegen_list" << std::endl;
+    // std::cout << "\033[1;31mTODO:\033[0m codegen_list" << std::endl;
     return nullptr;
 }
 
@@ -245,10 +245,11 @@ llvm::Value *Compiler::codegen_expression(Expression *e) {
         return codegen_string(static_cast<AstString *>(e));
     }
 
-    // case AST_IDENTIFIER_LIST: {
-    //     break;
-    // }
-    //
+    // TODO: should never happen
+    case AST_IDENTIFIER_LIST: {
+        return codegen_identifierlist(static_cast<AstIdentifierList *>(e));
+    }
+
     // case AST_EXPRESSION_LIST: {
     //     auto expr_list = static_cast<AstExpressionList *>(e);
     //     auto list = expr_list->get_expressions();
