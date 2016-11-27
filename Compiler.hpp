@@ -45,9 +45,22 @@ class Compiler {
 
     llvm::FunctionType *functype_make_int;
 
-    // llvm::FunctionType *functype_plus_str;
-    // llvm::FunctionType *functype_plus_int;
     llvm::FunctionType *functype_plus_any;
+    llvm::FunctionType *functype_minus_any;
+    llvm::FunctionType *functype_times_any;
+    llvm::FunctionType *functype_divide_any;
+    llvm::FunctionType *functype_and_any;
+    llvm::FunctionType *functype_or_any;
+    llvm::FunctionType *functype_eq_any;
+    llvm::FunctionType *functype_neq_any;
+    llvm::FunctionType *functype_lt_any;
+    llvm::FunctionType *functype_leq_any;
+    llvm::FunctionType *functype_gt_any;
+    llvm::FunctionType *functype_geq_any;
+    llvm::FunctionType *functype_cons_any;
+    llvm::FunctionType *functype_hd_any;
+    llvm::FunctionType *functype_tl_any;
+    llvm::FunctionType *functype_isnil_any;
     llvm::FunctionType *functype_print_any;
 
     // functions
@@ -56,14 +69,26 @@ class Compiler {
 
     llvm::Function *func_make_int;
 
-    // llvm::Function *func_plus_str;
-    // llvm::Function *func_plus_int;
     llvm::Function *func_plus_any;
+    llvm::Function *func_minus_any;
+    llvm::Function *func_times_any;
+    llvm::Function *func_divide_any;
+    llvm::Function *func_and_any;
+    llvm::Function *func_or_any;
+    llvm::Function *func_eq_any;
+    llvm::Function *func_neq_any;
+    llvm::Function *func_lt_any;
+    llvm::Function *func_leq_any;
+    llvm::Function *func_gt_any;
+    llvm::Function *func_geq_any;
+    llvm::Function *func_cons_any;
+    llvm::Function *func_hd_any;
+    llvm::Function *func_tl_any;
+    llvm::Function *func_isnil_any;
     llvm::Function *func_print_any;
 
   public:
     Compiler();
-    // void dump();
     void compile(Expression *root);
 
     llvm::Value *codegen_binop(AstBinOp *e);
