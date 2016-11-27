@@ -12,6 +12,8 @@
 
 #include <llvm/IR/IRBuilder.h>
 
+#include <stack>
+
 // #include "SymbolTable.hpp"
 
 class Compiler {
@@ -19,7 +21,9 @@ class Compiler {
     // SymbolTable sym_tab;
     // int c;
 
-    llvm::LLVMContext& context;
+    std::stack<llvm::BasicBlock *> blocks;
+
+    llvm::LLVMContext &context;
     llvm::Module *module;
     llvm::IRBuilder<> builder;
 
@@ -29,6 +33,7 @@ class Compiler {
 
     llvm::PointerType *ptr_void;
 
+    llvm::IntegerType *int_1;
     llvm::IntegerType *int_64;
 
     // struct types
@@ -46,6 +51,8 @@ class Compiler {
     llvm::FunctionType *functype_make_int;
     llvm::FunctionType *functype_make_string;
 
+    llvm::FunctionType *functype_assert_predicate;
+
     llvm::FunctionType *functype_binop;
     llvm::FunctionType *functype_unop;
 
@@ -57,6 +64,8 @@ class Compiler {
 
     llvm::Function *func_make_int;
     llvm::Function *func_make_string;
+
+    llvm::Function *func_assert_predicate;
 
     llvm::Function *func_plus_any;
     llvm::Function *func_minus_any;
@@ -82,10 +91,6 @@ class Compiler {
     llvm::Function *binop_funcs[13] { func_plus_any, func_minus_any, func_times_any, func_divide_any, func_and_any, func_or_any, func_eq_any, func_neq_any, func_lt_any, func_leq_any, func_gt_any, func_geq_any, func_cons_any };
     llvm::Function *unop_funcs[4] { func_hd_any, func_tl_any, func_isnil_any, func_print_any };
 
-  public:
-    Compiler();
-    void compile(Expression *root);
-
     llvm::Value *codegen_error(Expression *e, char *s);
 
     llvm::Value *codegen_binop(AstBinOp *e);
@@ -102,6 +107,10 @@ class Compiler {
     llvm::Value *codegen_string(AstString *e);
     llvm::Value *codegen_unop(AstUnOp *e);
     llvm::Value *codegen_expression(Expression *e);
+
+  public:
+    Compiler();
+    void compile(Expression *root);
 };
 
 #endif /* COMPILER_H_ */

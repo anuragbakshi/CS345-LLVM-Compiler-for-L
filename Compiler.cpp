@@ -20,6 +20,7 @@ Compiler::Compiler() :
     entry { llvm::BasicBlock::Create(context, "entrypoint", func_main) },
 
     ptr_void { llvm::PointerType::get(builder.getInt8Ty(), 0) },
+    int_1 { builder.getInt1Ty() },
     int_64 { builder.getInt64Ty() },
 
     // struct types
@@ -37,6 +38,8 @@ Compiler::Compiler() :
     functype_make_int { llvm::FunctionType::get(ptr_struct_Object, { int_64 }, false) },
     functype_make_string { llvm::FunctionType::get(ptr_struct_Object, { ptr_void }, false) },
 
+    functype_assert_predicate { llvm::FunctionType::get(int_1, { ptr_struct_Object }, false) },
+
     functype_binop { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
     functype_unop { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object }, false) },
     functype_display_any { llvm::FunctionType::get(builder.getVoidTy(), { ptr_struct_Object }, false) },
@@ -47,6 +50,8 @@ Compiler::Compiler() :
 
     func_make_int { llvm::Function::Create(functype_make_int, llvm::Function::ExternalLinkage, "make_int", module) },
     func_make_string { llvm::Function::Create(functype_make_string, llvm::Function::ExternalLinkage, "make_string", module) },
+
+    func_assert_predicate { llvm::Function::Create(functype_assert_predicate, llvm::Function::ExternalLinkage, "assert_predicate", module) },
 
     func_plus_any { llvm::Function::Create(functype_binop, llvm::Function::ExternalLinkage, "plus_any", module) },
     func_minus_any { llvm::Function::Create(functype_binop, llvm::Function::ExternalLinkage, "minus_any", module) },
@@ -76,12 +81,14 @@ Compiler::Compiler() :
 }
 
 void Compiler::compile(Expression *root) {
+    blocks.push(entry);
+
     builder.SetInsertPoint(entry);
 
     auto final_val = codegen_expression(root);
 
-    builder.CreateCall(func_display_any, final_val);
-    builder.CreateRet(llvm::ConstantInt::get(builder.getInt32Ty(), 0));
+    llvm::CallInst::Create(func_display_any, { final_val }, "", blocks.top());
+    llvm::ReturnInst::Create(context, llvm::ConstantInt::get(builder.getInt32Ty(), 0), blocks.top());
 
     module->dump();
 }
@@ -95,23 +102,10 @@ llvm::Value *Compiler::codegen_binop(AstBinOp *e) {
     auto gen_first = codegen_expression(e->get_first());
     auto gen_second = codegen_expression(e->get_second());
 
-    // if(e->get_binop_type() == PLUS) {
-    //     // llvm::CallInst *call = CallInst::Create(func_plus_any, args.begin(), args.end(), "", context.currentBlock());
-    //     auto call = llvm::CallInst::Create(func_plus_any, { gen_first, gen_second }, "", entry);
-    //
-    //     return call;
-    // }
-
-    return llvm::CallInst::Create(binop_funcs[e->get_binop_type()], { gen_first, gen_second }, "", entry);
-
-    // std::cout << "\033[1;31mTODO:\033[0m binop " << e->get_binop_type() << std::endl;
-    // return nullptr;
+    return llvm::CallInst::Create(binop_funcs[e->get_binop_type()], { gen_first, gen_second }, "", blocks.top());
 }
 
 llvm::Value *Compiler::codegen_branch(AstBranch *e) {
-    // std::cout << "\033[1;31mTODO:\033[0m codegen_branch" << std::endl;
-    // return nullptr;
-
     auto gen_pred = codegen_expression(e->get_pred());
 
     // if (eval_pred->get_type() == AST_INT) {
@@ -122,8 +116,48 @@ llvm::Value *Compiler::codegen_branch(AstBranch *e) {
     //     codegen_error(e, "Predicate in conditional must be an integer");
     // }
 
-    // TODO: add assert_int function to operations.h
+    // auto pred_val = llvm::CmpInst::Create(llvm::Instruction::OtherOpsBegin, llvm::CmpInst::ICMP_NE, gen_pred, llvm::ConstantInt::get(builder.getInt64Ty(), 0)); // TODO: wtf is OtherOps? InsertBefore?
+    // auto pred_val = gen_pred;
 
+    auto pred_val = llvm::CallInst::Create(func_assert_predicate, { gen_pred }, "", blocks.top());
+
+    auto if_block = llvm::BasicBlock::Create(context, "if", blocks.top()->getParent(), 0);
+    auto else_block = llvm::BasicBlock::Create(context, "else", blocks.top()->getParent(), 0);
+    auto after_block = llvm::BasicBlock::Create(context, "after", blocks.top()->getParent(), 0);
+
+    llvm::BranchInst::Create(if_block, else_block, pred_val, blocks.top());
+
+    blocks.push(if_block);
+    auto gen_if = codegen_expression(e->get_then_exp());
+    llvm::BranchInst::Create(after_block, blocks.top());
+    blocks.pop();
+
+    blocks.push(else_block);
+    auto gen_else = codegen_expression(e->get_else_exp());
+    llvm::BranchInst::Create(after_block, blocks.top());
+    blocks.pop();
+
+    // return llvm::BranchInst::Create(if_block, else_block, pred_val); // TODO: what is Instruction *InsertBefore?
+    // return llvm::BranchInst::Create(if_block, else_block, pred_val, blocks.top()); // TODO: what is Instruction *InsertBefore?
+    // llvm::BranchInst::Create(if_block, else_block, pred_val, blocks.top()); // TODO: what is Instruction *InsertBefore?
+
+    // auto gen_if = codegen_expression(e->get_then_exp());
+    // auto gen_else = codegen_expression(e->get_else_exp());
+
+    blocks.push(after_block);
+
+    // return llvm::SelectInst::Create(pred_val, gen_if, gen_else, "", blocks.top());  // TODO: what is Instruction *InsertBefore?
+    // return llvm::SelectInst::Create(pred_val, if_block, else_block, "", blocks.top());  // TODO: what is Instruction *InsertBefore?
+
+    auto phi = llvm::PHINode::Create(ptr_struct_Object, 2, "", blocks.top());
+    phi->addIncoming(gen_if, if_block);
+    phi->addIncoming(gen_else, else_block);
+
+    // blocks.pop();
+
+    // return phi;
+
+    return phi;
 }
 
 llvm::Value *Compiler::codegen_expressionlist(AstExpressionList *e) {
@@ -142,13 +176,9 @@ llvm::Value *Compiler::codegen_identifierlist(AstIdentifierList *e) {
 }
 
 llvm::Value *Compiler::codegen_int(AstInt *e) {
-    // std::cout << "\033[1;31mTODO:\033[0m codegen_int" << std::endl;
-    // return nullptr;
-
-    // return llvm::ConstantInt::get(llvm::Type::getInt64Ty(context), e->get_int(), true);
     auto int_val = llvm::ConstantInt::get(builder.getInt64Ty(), e->get_int(), true);
 
-    return llvm::CallInst::Create(func_make_int, { int_val }, "", entry);
+    return llvm::CallInst::Create(func_make_int, { int_val }, "", blocks.top());
 }
 
 llvm::Value *Compiler::codegen_lambda(AstLambda *e) {
@@ -177,33 +207,20 @@ llvm::Value *Compiler::codegen_read(AstRead *e) {
 }
 
 llvm::Value *Compiler::codegen_string(AstString *e) {
-    // std::cout << "\033[1;31mTODO:\033[0m codegen_string" << std::endl;
-    // return nullptr;
-
-    // auto str_val = llvm::ConstantInt::get(builder.getInt64Ty(), (int64_t) e->get_string().c_str(), true); // should be (char *)
-    //
-    // return llvm::CallInst::Create(func_make_string, { str_val }, "", entry);
-
     llvm::Value *str_val = builder.CreateGlobalStringPtr(e->get_string());
 
-    return llvm::CallInst::Create(func_make_string, { str_val }, "", entry);
+    return llvm::CallInst::Create(func_make_string, { str_val }, "", blocks.top());
 }
 
 llvm::Value *Compiler::codegen_unop(AstUnOp *e) {
-    // std::cout << "TODO: codegen_unop" << std::endl;
-    // return nullptr;
-
     auto gen_e = codegen_expression(e->get_expression());
 
-    return llvm::CallInst::Create(unop_funcs[e->get_unop_type()], { gen_e }, "", entry);
+    return llvm::CallInst::Create(unop_funcs[e->get_unop_type()], { gen_e }, "", blocks.top());
 }
 
 llvm::Value *Compiler::codegen_expression(Expression *e) {
     switch (e->get_type()) {
     case AST_BINOP: {
-        // res_exp = eval_binop(static_cast<AstBinOp *>(e));
-        // break;
-
         return codegen_binop(static_cast<AstBinOp *>(e));
     }
 
@@ -220,16 +237,10 @@ llvm::Value *Compiler::codegen_expression(Expression *e) {
     }
 
     case AST_INT: {
-        // res_exp = e;
-        // break;
-
         return codegen_int(static_cast<AstInt *>(e));
     }
 
     case AST_LAMBDA: {
-        // res_exp = e;
-        // break;
-
         return codegen_lambda(static_cast<AstLambda *>(e));
     }
 
@@ -244,9 +255,6 @@ llvm::Value *Compiler::codegen_expression(Expression *e) {
     // }
 
     case AST_STRING: {
-        // res_exp = e;
-        // break;
-
         return codegen_string(static_cast<AstString *>(e));
     }
 
@@ -287,24 +295,15 @@ llvm::Value *Compiler::codegen_expression(Expression *e) {
     }
 
     case AST_NIL: {
-        // res_exp = e;
-        // break;
-
         return codegen_nil(static_cast<AstNil *>(e));
     }
 
     // TODO: should never happen
     case AST_LIST: {
-        // res_exp = e;
-        // break;
-
         return codegen_list(static_cast<AstList *>(e));
     }
 
     case AST_UNOP: {
-        // res_exp = eval_unop(static_cast<AstUnOp *>(e));
-        // break;
-
         return codegen_unop(static_cast<AstUnOp *>(e));
     }
 

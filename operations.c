@@ -41,6 +41,16 @@ Object *make_nil() {
     nil_obj->int_val = NIL;
 }
 
+bool assert_predicate(Object *o) {
+    if(o->type == INT) {
+        return o->int_val != 0;
+    } else {
+        // error("Binop can only be applied to expressions of same type");
+    }
+
+    return 0;
+}
+
 Object *plus_str(Object *a, Object *b) {
     Object *concat = NEW(Object);
     concat->type = STRING;
@@ -306,7 +316,12 @@ Object *isnil_any(Object *o) {
 }
 
 Object *print_any(Object *o) {
-    // TODO: fill
+    if(o->type == STRING) {
+        printf("%s\n", o->str_ptr);
+    } else {
+        display_any(o);
+    }
+
     return make_int(0);
 }
 

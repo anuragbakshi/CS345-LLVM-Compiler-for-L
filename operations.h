@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -38,6 +39,8 @@ Object *read_int();
 
 Object *make_int(int64_t i);
 Object *make_string(char *s);
+
+bool assert_predicate(Object *o);
 
 Object *plus_str(Object *a, Object *b);
 Object *plus_int(Object *a, Object *b);
