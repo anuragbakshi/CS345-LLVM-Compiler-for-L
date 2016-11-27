@@ -44,6 +44,7 @@ class Compiler {
     llvm::FunctionType *functype_read_int;
 
     llvm::FunctionType *functype_make_int;
+    llvm::FunctionType *functype_make_string;
 
     llvm::FunctionType *functype_binop;
     llvm::FunctionType *functype_unop;
@@ -55,6 +56,7 @@ class Compiler {
     llvm::Function *func_read_int;
 
     llvm::Function *func_make_int;
+    llvm::Function *func_make_string;
 
     llvm::Function *func_plus_any;
     llvm::Function *func_minus_any;

@@ -27,6 +27,14 @@ Object *make_int(int64_t i) {
     return int_obj;
 }
 
+Object *make_string(char *s) {
+    Object *str_obj = NEW(Object);
+    str_obj->type = STRING;
+    str_obj->str_ptr = s;
+
+    return str_obj;
+}
+
 Object *make_nil() {
     Object *nil_obj = NEW(Object);
     nil_obj->type = NIL;

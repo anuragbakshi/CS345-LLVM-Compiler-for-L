@@ -35,6 +35,7 @@ Compiler::Compiler() :
     functype_read_int { llvm::FunctionType::get(ptr_struct_Object, false) },
 
     functype_make_int { llvm::FunctionType::get(ptr_struct_Object, { int_64 }, false) },
+    functype_make_string { llvm::FunctionType::get(ptr_struct_Object, { ptr_void }, false) },
 
     functype_binop { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
     functype_unop { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object }, false) },
@@ -45,6 +46,7 @@ Compiler::Compiler() :
     func_read_int { llvm::Function::Create(functype_read_int, llvm::Function::ExternalLinkage, "read_int", module) },
 
     func_make_int { llvm::Function::Create(functype_make_int, llvm::Function::ExternalLinkage, "make_int", module) },
+    func_make_string { llvm::Function::Create(functype_make_string, llvm::Function::ExternalLinkage, "make_string", module) },
 
     func_plus_any { llvm::Function::Create(functype_binop, llvm::Function::ExternalLinkage, "plus_any", module) },
     func_minus_any { llvm::Function::Create(functype_binop, llvm::Function::ExternalLinkage, "minus_any", module) },
@@ -127,10 +129,9 @@ llvm::Value *Compiler::codegen_int(AstInt *e) {
     // return nullptr;
 
     // return llvm::ConstantInt::get(llvm::Type::getInt64Ty(context), e->get_int(), true);
-    auto int_val = llvm::ConstantInt::get(llvm::Type::getInt64Ty(context), e->get_int(), true);
-    auto call = llvm::CallInst::Create(func_make_int, { int_val }, "", entry);
+    auto int_val = llvm::ConstantInt::get(builder.getInt64Ty(), e->get_int(), true);
 
-    return call;
+    return llvm::CallInst::Create(func_make_int, { int_val }, "", entry);
 }
 
 llvm::Value *Compiler::codegen_lambda(AstLambda *e) {
@@ -159,8 +160,16 @@ llvm::Value *Compiler::codegen_read(AstRead *e) {
 }
 
 llvm::Value *Compiler::codegen_string(AstString *e) {
-    std::cout << "\033[1;31mTODO:\033[0m codegen_string" << std::endl;
-    return nullptr;
+    // std::cout << "\033[1;31mTODO:\033[0m codegen_string" << std::endl;
+    // return nullptr;
+
+    // auto str_val = llvm::ConstantInt::get(builder.getInt64Ty(), (int64_t) e->get_string().c_str(), true); // should be (char *)
+    //
+    // return llvm::CallInst::Create(func_make_string, { str_val }, "", entry);
+
+    llvm::Value *str_val = builder.CreateGlobalStringPtr(e->get_string());
+
+    return llvm::CallInst::Create(func_make_string, { str_val }, "", entry);
 }
 
 llvm::Value *Compiler::codegen_unop(AstUnOp *e) {
@@ -214,12 +223,14 @@ llvm::Value *Compiler::codegen_expression(Expression *e) {
     //     sym_tab.pop();
     //     break;
     // }
-    //
-    // case AST_STRING: {
-    //     res_exp = e;
-    //     break;
-    // }
-    //
+
+    case AST_STRING: {
+        // res_exp = e;
+        // break;
+
+        return codegen_string(static_cast<AstString *>(e));
+    }
+
     // case AST_IDENTIFIER_LIST: {
     //     break;
     // }
