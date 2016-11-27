@@ -45,7 +45,7 @@ class Compiler {
     llvm::PointerType *ptr_struct_Object;
 
     // function types
-    llvm::FunctionType *functype_read_line;
+    llvm::FunctionType *functype_read_string;
     llvm::FunctionType *functype_read_int;
 
     llvm::FunctionType *functype_make_int;
@@ -59,7 +59,7 @@ class Compiler {
     llvm::FunctionType *functype_display_any;
 
     // functions
-    llvm::Function *func_read_line;
+    llvm::Function *func_read_string;
     llvm::Function *func_read_int;
 
     llvm::Function *func_make_int;

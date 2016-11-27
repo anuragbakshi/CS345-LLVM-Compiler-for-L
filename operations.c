@@ -1,8 +1,11 @@
 #include "operations.h"
 
-Object *read_line() {
-    char *input;
-    getline(&input, 0, stdin);
+Object *read_string() {
+    char *input = NULL;
+    size_t size = 0;
+    size = getline(&input, &size, stdin);
+    input[size - 1] = 0;
+
     Object *str_obj = NEW(Object);
     str_obj->type = STRING;
     str_obj->str_ptr = input;
@@ -10,8 +13,11 @@ Object *read_line() {
 }
 
 Object *read_int() {
-    char *input;
-    getline(&input, 0, stdin);
+    char *input = NULL;
+    size_t size = 0;
+    size = getline(&input, &size, stdin);
+    input[size - 1] = 0;
+
     Object *int_obj = NEW(Object);
     int_obj->type = INT;
     // TODO: check to make sure input is a number

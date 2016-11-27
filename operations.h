@@ -34,7 +34,7 @@ typedef struct Object {
     };
 } Object;
 
-Object *read_line();
+Object *read_string();
 Object *read_int();
 
 Object *make_int(int64_t i);
@@ -79,5 +79,5 @@ void __force_gen_llvm__() {
     Object o;
 
     __force_gen_llvm_use__(0, t, f, o);
-    __force_gen_llvm_use__(0, read_line, read_int, plus_str, plus_int, plus_any);
+    __force_gen_llvm_use__(0, read_string, read_int, plus_str, plus_int, plus_any);
 }

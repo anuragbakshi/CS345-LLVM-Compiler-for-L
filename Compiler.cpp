@@ -32,7 +32,7 @@ Compiler::Compiler() :
     ptr_struct_Object { llvm::PointerType::get(struct_Object, 0) },
 
     // function types
-    functype_read_line { llvm::FunctionType::get(ptr_struct_Object, false) },
+    functype_read_string { llvm::FunctionType::get(ptr_struct_Object, false) },
     functype_read_int { llvm::FunctionType::get(ptr_struct_Object, false) },
 
     functype_make_int { llvm::FunctionType::get(ptr_struct_Object, { int_64 }, false) },
@@ -45,7 +45,7 @@ Compiler::Compiler() :
     functype_display_any { llvm::FunctionType::get(builder.getVoidTy(), { ptr_struct_Object }, false) },
 
     // functions
-    func_read_line { llvm::Function::Create(functype_read_line, llvm::Function::ExternalLinkage, "read_line", module) },
+    func_read_string { llvm::Function::Create(functype_read_string, llvm::Function::ExternalLinkage, "read_string", module) },
     func_read_int { llvm::Function::Create(functype_read_int, llvm::Function::ExternalLinkage, "read_int", module) },
 
     func_make_int { llvm::Function::Create(functype_make_int, llvm::Function::ExternalLinkage, "make_int", module) },
@@ -185,8 +185,11 @@ llvm::Value *Compiler::codegen_nil(AstNil *e) {
 }
 
 llvm::Value *Compiler::codegen_read(AstRead *e) {
-    std::cout << "\033[1;31mTODO:\033[0m codegen_read" << std::endl;
-    return nullptr;
+    if(e->read_integer()) {
+        return llvm::CallInst::Create(func_read_int, "", blocks.top());
+    } else {
+        return llvm::CallInst::Create(func_read_string, "", blocks.top());
+    }
 }
 
 llvm::Value *Compiler::codegen_string(AstString *e) {
