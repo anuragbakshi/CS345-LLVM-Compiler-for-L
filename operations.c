@@ -274,7 +274,7 @@ Object *cons_any(Object *a, Object *b) {
 }
 
 Object *hd_any(Object *o) {
-    if(a->type > 3) { // Is List
+    if(o->type > 3) { // Is List
         return o->list_head;
     } else {
         return o;
@@ -284,7 +284,7 @@ Object *hd_any(Object *o) {
 }
 
 Object *tl_any(Object *o) {
-    if(a->type > 3) { // Is List
+    if(o->type > 3) { // Is List
         return o->list_tail;
     } else {
         return make_nil();
@@ -294,7 +294,7 @@ Object *tl_any(Object *o) {
 }
 
 Object *isnil_any(Object *o) {
-    return o->type == NIL && o->list_tail == NIL ? make_int(1) : make_int(0);
+    return o->type == NIL && o->nil_type == NIL ? make_int(1) : make_int(0);
 }
 
 void print_int(Object *o) {

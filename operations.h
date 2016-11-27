@@ -25,6 +25,7 @@ typedef struct Object {
         struct Object *list_head;
     };
     union {
+        Type nil_type;
         int64_t int_val;
         char *str_ptr;
         struct Object *list_tail;
