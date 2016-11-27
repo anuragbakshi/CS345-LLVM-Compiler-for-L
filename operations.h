@@ -14,7 +14,7 @@ typedef enum Type {
 } Type;
 
 typedef struct Func {
-    map_t *env;
+    map_t env;
     void *f;
 } Func;
 
@@ -37,7 +37,7 @@ Object *add_str(Object *a, Object *b);
 Object *add_int(Object *a, Object *b);
 Object *add_any(Object *a, Object *b);
 
-extern void __force_gen_llvm_use__(void *_, ...);
+void __force_gen_llvm_use__(void *_, ...) {}
 
 void __force_gen_llvm__() {
     Type t;
@@ -45,10 +45,5 @@ void __force_gen_llvm__() {
     Object o;
 
     __force_gen_llvm_use__(0, t, f, o);
-
-    read_line();
-    read_int();
-    add_str(0, 0);
-    add_int(0, 0);
-    add_any(0, 0);
+    __force_gen_llvm_use__(0, read_line, read_int, add_str, add_int, add_any);
 }

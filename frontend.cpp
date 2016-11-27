@@ -90,5 +90,6 @@ int main(int argc, char **argv) {
 
         Compiler c;
         c.codegen_expression(res_expr);
+        c.dump();
     }
 }
