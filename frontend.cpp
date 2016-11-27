@@ -93,4 +93,6 @@ int main(int argc, char **argv) {
         // c.dump();
         c.compile(res_expr);
     }
+
+    return 0;
 }

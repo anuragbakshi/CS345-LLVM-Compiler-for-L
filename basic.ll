@@ -4,10 +4,16 @@
 
 define i32 @main() {
 entrypoint:
-  %0 = call %struct.Object* @make_int(i64 5)
-  %1 = call %struct.Object* @make_int(i64 4)
+  %0 = call %struct.Object* @make_int(i64 1)
+  %1 = call %struct.Object* @make_int(i64 2)
   %2 = call %struct.Object* @plus_any(%struct.Object* %0, %struct.Object* %1)
-  call void @display_any(%struct.Object* %2)
+  %3 = call %struct.Object* @make_int(i64 5)
+  %4 = call %struct.Object* @times_any(%struct.Object* %2, %struct.Object* %3)
+  %5 = call %struct.Object* @make_int(i64 1)
+  %6 = call %struct.Object* @minus_any(%struct.Object* %4, %struct.Object* %5)
+  %7 = call %struct.Object* @make_int(i64 7)
+  %8 = call %struct.Object* @divide_any(%struct.Object* %6, %struct.Object* %7)
+  call void @display_any(%struct.Object* %8)
   ret i32 0
 }
 

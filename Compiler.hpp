@@ -76,6 +76,10 @@ class Compiler {
 
     llvm::Function *func_display_any;
 
+    // helper lookup tables
+    llvm::Function *binop_funcs[13] { func_plus_any, func_minus_any, func_times_any, func_divide_any, func_and_any, func_or_any, func_eq_any, func_neq_any, func_lt_any, func_leq_any, func_gt_any, func_geq_any, func_cons_any };
+    llvm::Function *unop_funcs[4] { func_hd_any, func_tl_any, func_isnil_any, func_print_any };
+
   public:
     Compiler();
     void compile(Expression *root);

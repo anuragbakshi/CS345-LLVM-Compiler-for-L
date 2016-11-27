@@ -89,15 +89,17 @@ llvm::Value *Compiler::codegen_binop(AstBinOp *e) {
     auto gen_first = codegen_expression(e->get_first());
     auto gen_second = codegen_expression(e->get_second());
 
-    if(e->get_binop_type() == PLUS) {
-        // llvm::CallInst *call = CallInst::Create(func_plus_any, args.begin(), args.end(), "", context.currentBlock());
-        auto call = llvm::CallInst::Create(func_plus_any, { gen_first, gen_second }, "", entry);
+    // if(e->get_binop_type() == PLUS) {
+    //     // llvm::CallInst *call = CallInst::Create(func_plus_any, args.begin(), args.end(), "", context.currentBlock());
+    //     auto call = llvm::CallInst::Create(func_plus_any, { gen_first, gen_second }, "", entry);
+    //
+    //     return call;
+    // }
 
-        return call;
-    }
+    return llvm::CallInst::Create(binop_funcs[e->get_binop_type()], { gen_first, gen_second }, "", entry);
 
-    std::cout << "\033[1;31mTODO:\033[0m binop " << e->get_binop_type() << std::endl;
-    return nullptr;
+    // std::cout << "\033[1;31mTODO:\033[0m binop " << e->get_binop_type() << std::endl;
+    // return nullptr;
 }
 
 llvm::Value *Compiler::codegen_branch(AstBranch *e) {
@@ -162,8 +164,12 @@ llvm::Value *Compiler::codegen_string(AstString *e) {
 }
 
 llvm::Value *Compiler::codegen_unop(AstUnOp *e) {
-    std::cout << "TODO: codegen_unop" << std::endl;
-    return nullptr;
+    // std::cout << "TODO: codegen_unop" << std::endl;
+    // return nullptr;
+
+    auto gen_e = codegen_expression(e->get_expression());
+
+    return llvm::CallInst::Create(unop_funcs[e->get_unop_type()], { gen_e }, "", entry);
 }
 
 llvm::Value *Compiler::codegen_expression(Expression *e) {
