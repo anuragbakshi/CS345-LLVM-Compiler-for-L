@@ -8,7 +8,8 @@
 #define NEW(type) (type *) malloc(sizeof(type))
 
 typedef enum Type {
-    INT = 1,
+    NIL = 0,
+    INT,
     STRING,
     FUNCTION
 } Type;
