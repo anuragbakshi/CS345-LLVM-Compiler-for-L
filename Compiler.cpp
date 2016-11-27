@@ -116,9 +116,6 @@ llvm::Value *Compiler::codegen_branch(AstBranch *e) {
     //     codegen_error(e, "Predicate in conditional must be an integer");
     // }
 
-    // auto pred_val = llvm::CmpInst::Create(llvm::Instruction::OtherOpsBegin, llvm::CmpInst::ICMP_NE, gen_pred, llvm::ConstantInt::get(builder.getInt64Ty(), 0)); // TODO: wtf is OtherOps? InsertBefore?
-    // auto pred_val = gen_pred;
-
     auto pred_val = llvm::CallInst::Create(func_assert_predicate, { gen_pred }, "", blocks.top());
 
     auto if_block = llvm::BasicBlock::Create(context, "if", blocks.top()->getParent(), 0);
@@ -137,25 +134,11 @@ llvm::Value *Compiler::codegen_branch(AstBranch *e) {
     llvm::BranchInst::Create(after_block, blocks.top());
     blocks.pop();
 
-    // return llvm::BranchInst::Create(if_block, else_block, pred_val); // TODO: what is Instruction *InsertBefore?
-    // return llvm::BranchInst::Create(if_block, else_block, pred_val, blocks.top()); // TODO: what is Instruction *InsertBefore?
-    // llvm::BranchInst::Create(if_block, else_block, pred_val, blocks.top()); // TODO: what is Instruction *InsertBefore?
-
-    // auto gen_if = codegen_expression(e->get_then_exp());
-    // auto gen_else = codegen_expression(e->get_else_exp());
-
     blocks.push(after_block);
-
-    // return llvm::SelectInst::Create(pred_val, gen_if, gen_else, "", blocks.top());  // TODO: what is Instruction *InsertBefore?
-    // return llvm::SelectInst::Create(pred_val, if_block, else_block, "", blocks.top());  // TODO: what is Instruction *InsertBefore?
 
     auto phi = llvm::PHINode::Create(ptr_struct_Object, 2, "", blocks.top());
     phi->addIncoming(gen_if, if_block);
     phi->addIncoming(gen_else, else_block);
-
-    // blocks.pop();
-
-    // return phi;
 
     return phi;
 }
