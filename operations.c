@@ -45,7 +45,7 @@ Object *plus_str(Object *a, Object *b) {
 }
 
 Object *plus_int(Object *a, Object *b) {
-    make_int(a->int_val + b->int_val);
+    return make_int(a->int_val + b->int_val);
 }
 
 Object *plus_any(Object *a, Object *b) {
@@ -61,7 +61,7 @@ Object *plus_any(Object *a, Object *b) {
 }
 
 Object *minus_int(Object *a, Object *b) {
-    make_int(a->int_val - b->int_val);
+    return make_int(a->int_val - b->int_val);
 }
 
 Object *minus_any(Object *a, Object *b) {
@@ -75,7 +75,7 @@ Object *minus_any(Object *a, Object *b) {
 }
 
 Object *times_int(Object *a, Object *b) {
-    make_int(a->int_val * b->int_val);
+    return make_int(a->int_val * b->int_val);
 }
 
 Object *times_any(Object *a, Object *b) {
@@ -89,7 +89,7 @@ Object *times_any(Object *a, Object *b) {
 }
 
 Object *divide_int(Object *a, Object *b) {
-    make_int(a->int_val / b->int_val);
+    return make_int(a->int_val / b->int_val);
 }
 
 Object *divide_any(Object *a, Object *b) {
