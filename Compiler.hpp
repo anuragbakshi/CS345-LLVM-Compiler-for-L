@@ -45,23 +45,10 @@ class Compiler {
 
     llvm::FunctionType *functype_make_int;
 
-    llvm::FunctionType *functype_plus_any;
-    llvm::FunctionType *functype_minus_any;
-    llvm::FunctionType *functype_times_any;
-    llvm::FunctionType *functype_divide_any;
-    llvm::FunctionType *functype_and_any;
-    llvm::FunctionType *functype_or_any;
-    llvm::FunctionType *functype_eq_any;
-    llvm::FunctionType *functype_neq_any;
-    llvm::FunctionType *functype_lt_any;
-    llvm::FunctionType *functype_leq_any;
-    llvm::FunctionType *functype_gt_any;
-    llvm::FunctionType *functype_geq_any;
-    llvm::FunctionType *functype_cons_any;
-    llvm::FunctionType *functype_hd_any;
-    llvm::FunctionType *functype_tl_any;
-    llvm::FunctionType *functype_isnil_any;
-    llvm::FunctionType *functype_print_any;
+    llvm::FunctionType *functype_binop;
+    llvm::FunctionType *functype_unop;
+
+    llvm::FunctionType *functype_display_any;
 
     // functions
     llvm::Function *func_read_line;
@@ -86,6 +73,8 @@ class Compiler {
     llvm::Function *func_tl_any;
     llvm::Function *func_isnil_any;
     llvm::Function *func_print_any;
+
+    llvm::Function *func_display_any;
 
   public:
     Compiler();

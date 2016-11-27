@@ -36,23 +36,9 @@ Compiler::Compiler() :
 
     functype_make_int { llvm::FunctionType::get(ptr_struct_Object, { int_64 }, false) },
 
-    functype_plus_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
-    functype_minus_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
-    functype_times_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
-    functype_divide_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
-    functype_and_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
-    functype_or_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
-    functype_eq_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
-    functype_neq_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
-    functype_lt_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
-    functype_leq_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
-    functype_gt_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
-    functype_geq_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
-    functype_cons_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
-    functype_hd_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object }, false) },
-    functype_tl_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object }, false) },
-    functype_isnil_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object }, false) },
-    functype_print_any { llvm::FunctionType::get(builder.getVoidTy(), { ptr_struct_Object }, false) },
+    functype_binop { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
+    functype_unop { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object }, false) },
+    functype_display_any { llvm::FunctionType::get(builder.getVoidTy(), { ptr_struct_Object }, false) },
 
     // functions
     func_read_line { llvm::Function::Create(functype_read_line, llvm::Function::ExternalLinkage, "read_line", module) },
@@ -60,23 +46,25 @@ Compiler::Compiler() :
 
     func_make_int { llvm::Function::Create(functype_make_int, llvm::Function::ExternalLinkage, "make_int", module) },
 
-    func_plus_any { llvm::Function::Create(functype_plus_any, llvm::Function::ExternalLinkage, "plus_any", module) },
-    func_minus_any { llvm::Function::Create(functype_minus_any, llvm::Function::ExternalLinkage, "minus_any", module) },
-    func_times_any { llvm::Function::Create(functype_times_any, llvm::Function::ExternalLinkage, "times_any", module) },
-    func_divide_any { llvm::Function::Create(functype_divide_any, llvm::Function::ExternalLinkage, "divide_any", module) },
-    func_and_any { llvm::Function::Create(functype_and_any, llvm::Function::ExternalLinkage, "and_any", module) },
-    func_or_any { llvm::Function::Create(functype_or_any, llvm::Function::ExternalLinkage, "or_any", module) },
-    func_eq_any { llvm::Function::Create(functype_eq_any, llvm::Function::ExternalLinkage, "eq_any", module) },
-    func_neq_any { llvm::Function::Create(functype_neq_any, llvm::Function::ExternalLinkage, "neq_any", module) },
-    func_lt_any { llvm::Function::Create(functype_lt_any, llvm::Function::ExternalLinkage, "lt_any", module) },
-    func_leq_any { llvm::Function::Create(functype_leq_any, llvm::Function::ExternalLinkage, "leq_any", module) },
-    func_gt_any { llvm::Function::Create(functype_gt_any, llvm::Function::ExternalLinkage, "gt_any", module) },
-    func_geq_any { llvm::Function::Create(functype_geq_any, llvm::Function::ExternalLinkage, "geq_any", module) },
-    func_cons_any { llvm::Function::Create(functype_cons_any, llvm::Function::ExternalLinkage, "cons_any", module) },
-    func_hd_any { llvm::Function::Create(functype_hd_any, llvm::Function::ExternalLinkage, "hd_any", module) },
-    func_tl_any { llvm::Function::Create(functype_tl_any, llvm::Function::ExternalLinkage, "tl_any", module) },
-    func_isnil_any { llvm::Function::Create(functype_isnil_any, llvm::Function::ExternalLinkage, "isnil_any", module) },
-    func_print_any { llvm::Function::Create(functype_print_any, llvm::Function::ExternalLinkage, "print_any", module) }
+    func_plus_any { llvm::Function::Create(functype_binop, llvm::Function::ExternalLinkage, "plus_any", module) },
+    func_minus_any { llvm::Function::Create(functype_binop, llvm::Function::ExternalLinkage, "minus_any", module) },
+    func_times_any { llvm::Function::Create(functype_binop, llvm::Function::ExternalLinkage, "times_any", module) },
+    func_divide_any { llvm::Function::Create(functype_binop, llvm::Function::ExternalLinkage, "divide_any", module) },
+    func_and_any { llvm::Function::Create(functype_binop, llvm::Function::ExternalLinkage, "and_any", module) },
+    func_or_any { llvm::Function::Create(functype_binop, llvm::Function::ExternalLinkage, "or_any", module) },
+    func_eq_any { llvm::Function::Create(functype_binop, llvm::Function::ExternalLinkage, "eq_any", module) },
+    func_neq_any { llvm::Function::Create(functype_binop, llvm::Function::ExternalLinkage, "neq_any", module) },
+    func_lt_any { llvm::Function::Create(functype_binop, llvm::Function::ExternalLinkage, "lt_any", module) },
+    func_leq_any { llvm::Function::Create(functype_binop, llvm::Function::ExternalLinkage, "leq_any", module) },
+    func_gt_any { llvm::Function::Create(functype_binop, llvm::Function::ExternalLinkage, "gt_any", module) },
+    func_geq_any { llvm::Function::Create(functype_binop, llvm::Function::ExternalLinkage, "geq_any", module) },
+    func_cons_any { llvm::Function::Create(functype_binop, llvm::Function::ExternalLinkage, "cons_any", module) },
+    func_hd_any { llvm::Function::Create(functype_unop, llvm::Function::ExternalLinkage, "hd_any", module) },
+    func_tl_any { llvm::Function::Create(functype_unop, llvm::Function::ExternalLinkage, "tl_any", module) },
+    func_isnil_any { llvm::Function::Create(functype_unop, llvm::Function::ExternalLinkage, "isnil_any", module) },
+    func_print_any { llvm::Function::Create(functype_unop, llvm::Function::ExternalLinkage, "print_any", module) },
+
+    func_display_any { llvm::Function::Create(functype_display_any, llvm::Function::ExternalLinkage, "display_any", module) }
 {
     std::vector<llvm::Type *> struct_Func_fields { ptr_void, ptr_void };
     struct_Func->setBody(struct_Func_fields);
@@ -90,7 +78,7 @@ void Compiler::compile(Expression *root) {
 
     auto final_val = codegen_expression(root);
 
-    builder.CreateCall(func_print_any, final_val);
+    builder.CreateCall(func_display_any, final_val);
     builder.CreateRet(llvm::ConstantInt::get(builder.getInt32Ty(), 0));
 
     module->dump();

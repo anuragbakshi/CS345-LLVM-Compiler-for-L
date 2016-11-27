@@ -297,19 +297,24 @@ Object *isnil_any(Object *o) {
     return o->type == NIL && o->nil_type == NIL ? make_int(1) : make_int(0);
 }
 
-void print_int(Object *o) {
+Object *print_any(Object *o) {
+    // TODO: fill
+    return make_int(0);
+}
+
+void display_int(Object *o) {
     printf("%lld\n", o->int_val);
 }
 
-void print_str(Object *o) {
+void display_str(Object *o) {
     printf("\"%s\"\n", o->str_ptr);
 }
 
-void print_any(Object *o) {
+void display_any(Object *o) {
     if(o->type == INT) {
-        return print_int(o);
+        return display_int(o);
     } else if(o->type == STRING) {
-        return print_str(o);
+        return display_str(o);
     } else {
         error("Binop can only be applied to expressions of same type");
     }

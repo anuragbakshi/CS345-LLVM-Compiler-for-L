@@ -58,10 +58,11 @@ Object *cons_any(Object *a, Object *b);
 Object *hd_any(Object *o);
 Object *tl_any(Object *o);
 Object *isnil_any(Object *o);
+Object *print_any(Object *o);
 
-void print_int(Object *o);
-void print_str(Object *o);
-void print_any(Object *o);
+void display_int(Object *o);
+void display_str(Object *o);
+void display_any(Object *o);
 
 void error(char *s);
 
