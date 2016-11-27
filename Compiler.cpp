@@ -22,19 +22,37 @@ Compiler::Compiler() :
     ptr_void { llvm::PointerType::get(builder.getInt8Ty(), 0) },
     int_64 { builder.getInt64Ty() },
 
+    // struct types
     struct_Func { llvm::StructType::create(context, "struct.Func") },
-    struct_Object { llvm::StructType::create(context, "struct.Func") },
+    struct_Object { llvm::StructType::create(context, "struct.Object") },
 
+    // pointer types
     ptr_struct_Func { llvm::PointerType::get(struct_Func, 0) },
     ptr_struct_Object { llvm::PointerType::get(struct_Object, 0) },
 
+    // function types
     functype_read_line { llvm::FunctionType::get(ptr_struct_Object, false) },
     functype_read_int { llvm::FunctionType::get(ptr_struct_Object, false) },
-    functype_add_str { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
-    functype_add_int { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
-    functype_add_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) }
+
+    functype_make_int { llvm::FunctionType::get(ptr_struct_Object, { int_64 }, false) },
+
+    // functype_add_str { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
+    // functype_add_int { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
+    functype_add_any { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
+    functype_print_any { llvm::FunctionType::get(builder.getVoidTy(), { ptr_struct_Object }, false) },
+
+    // functions
+    func_read_line { llvm::Function::Create(functype_read_line, llvm::Function::ExternalLinkage, "read_line", module) },
+    func_read_int { llvm::Function::Create(functype_read_int, llvm::Function::ExternalLinkage, "read_int", module) },
+
+    func_make_int { llvm::Function::Create(functype_make_int, llvm::Function::ExternalLinkage, "make_int", module) },
+
+    // func_add_str { llvm::Function::Create(functype_add_str, llvm::Function::ExternalLinkage, "add_str", module) },
+    // func_add_int { llvm::Function::Create(functype_add_int, llvm::Function::ExternalLinkage, "add_int", module) },
+    func_add_any { llvm::Function::Create(functype_add_any, llvm::Function::ExternalLinkage, "add_any", module) },
+    func_print_any { llvm::Function::Create(functype_print_any, llvm::Function::ExternalLinkage, "print_any", module) }
 {
-    builder.SetInsertPoint(entry);
+    // builder.SetInsertPoint(entry);
 
     std::vector<llvm::Type *> struct_Func_fields { ptr_void, ptr_void };
     struct_Func->setBody(struct_Func_fields);
@@ -43,60 +61,105 @@ Compiler::Compiler() :
     struct_Object->setBody(struct_Func_fields);
 }
 
-void Compiler::dump() {
+// void Compiler::dump() {
+//     builder.CreateCall(func_print_any);
+//
+//     builder.CreateRet(llvm::ConstantInt::get(builder.getInt32Ty(), 0));
+//
+//     module->dump();
+// }
+
+void Compiler::compile(Expression *root) {
+    builder.SetInsertPoint(entry);
+
+    auto final_val = codegen_expression(root);
+
+    builder.CreateCall(func_print_any, final_val);
+    builder.CreateRet(llvm::ConstantInt::get(builder.getInt32Ty(), 0));
+
     module->dump();
 }
 
 llvm::Value *Compiler::codegen_binop(AstBinOp *e) {
-    std::cout << "\033[1;31mTODO:\033[0m codegen_binop" << std::endl;
+    // std::cout << "\033[1;31mTODO:\033[0m codegen_binop" << std::endl;
+    auto gen_first = codegen_expression(e->get_first());
+    auto gen_second = codegen_expression(e->get_second());
+
+    if(e->get_binop_type() == PLUS) {
+        // llvm::CallInst *call = CallInst::Create(func_add_any, args.begin(), args.end(), "", context.currentBlock());
+        auto call = llvm::CallInst::Create(func_add_any, { gen_first, gen_second }, "", entry);
+
+        return call;
+    }
+
+    std::cout << "\033[1;31mTODO:\033[0m binop " << e->get_binop_type() << std::endl;
+    return nullptr;
 }
 
 llvm::Value *Compiler::codegen_branch(AstBranch *e) {
     std::cout << "\033[1;31mTODO:\033[0m codegen_branch" << std::endl;
+    return nullptr;
 }
 
 llvm::Value *Compiler::codegen_expressionlist(AstExpressionList *e) {
     std::cout << "\033[1;31mTODO:\033[0m codegen_expressionlist" << std::endl;
+    return nullptr;
 }
 
 llvm::Value *Compiler::codegen_identifier(AstIdentifier *e) {
     std::cout << "\033[1;31mTODO:\033[0m codegen_identifier" << std::endl;
+    return nullptr;
 }
 
 llvm::Value *Compiler::codegen_identifierlist(AstIdentifierList *e) {
     std::cout << "\033[1;31mTODO:\033[0m codegen_identifierlist" << std::endl;
+    return nullptr;
 }
 
 llvm::Value *Compiler::codegen_int(AstInt *e) {
-    std::cout << "\033[1;31mTODO:\033[0m codegen_int" << std::endl;
+    // std::cout << "\033[1;31mTODO:\033[0m codegen_int" << std::endl;
+    // return nullptr;
+
+    // return llvm::ConstantInt::get(llvm::Type::getInt64Ty(context), e->get_int(), true);
+    auto int_val = llvm::ConstantInt::get(llvm::Type::getInt64Ty(context), e->get_int(), true);
+    auto call = llvm::CallInst::Create(func_make_int, { int_val }, "", entry);
+
+    return call;
 }
 
 llvm::Value *Compiler::codegen_lambda(AstLambda *e) {
     std::cout << "\033[1;31mTODO:\033[0m codegen_lambda" << std::endl;
+    return nullptr;
 }
 
 llvm::Value *Compiler::codegen_let(AstLet *e) {
     std::cout << "\033[1;31mTODO:\033[0m codegen_let" << std::endl;
+    return nullptr;
 }
 
 llvm::Value *Compiler::codegen_list(AstList *e) {
     std::cout << "\033[1;31mTODO:\033[0m codegen_list" << std::endl;
+    return nullptr;
 }
 
 llvm::Value *Compiler::codegen_nil(AstNil *e) {
     std::cout << "\033[1;31mTODO:\033[0m codegen_nil" << std::endl;
+    return nullptr;
 }
 
 llvm::Value *Compiler::codegen_read(AstRead *e) {
     std::cout << "\033[1;31mTODO:\033[0m codegen_read" << std::endl;
+    return nullptr;
 }
 
 llvm::Value *Compiler::codegen_string(AstString *e) {
     std::cout << "\033[1;31mTODO:\033[0m codegen_string" << std::endl;
+    return nullptr;
 }
 
 llvm::Value *Compiler::codegen_unop(AstUnOp *e) {
     std::cout << "TODO: codegen_unop" << std::endl;
+    return nullptr;
 }
 
 llvm::Value *Compiler::codegen_expression(Expression *e) {
@@ -120,11 +183,13 @@ llvm::Value *Compiler::codegen_expression(Expression *e) {
         return codegen_identifier(static_cast<AstIdentifier *>(e));
     }
 
-    // case AST_INT: {
-    //     res_exp = e;
-    //     break;
-    // }
-    //
+    case AST_INT: {
+        // res_exp = e;
+        // break;
+
+        return codegen_int(static_cast<AstInt *>(e));
+    }
+
     // case AST_LAMBDA: {
     //     res_exp = e;
     //     break;

@@ -19,6 +19,14 @@ Object *read_int() {
     return int_obj;
 }
 
+Object *make_int(int64_t i) {
+    Object *int_obj = NEW(Object);
+    int_obj->type = INT;
+    int_obj->int_val = i;
+
+    return int_obj;
+}
+
 Object *add_str(Object *a, Object *b) {
     Object *concat = NEW(Object);
     concat->type = STRING;
@@ -49,4 +57,22 @@ Object *add_any(Object *a, Object *b) {
     }
 
     return NULL;
+}
+
+void print_int(Object *o) {
+    printf("%lld\n", o->int_val);
+}
+
+void print_str(Object *o) {
+    printf("%s\n", o->str_ptr);
+}
+
+void print_any(Object *o) {
+    if(o->type == INT) {
+        return print_int(o);
+    } else if(o->type == STRING) {
+        return print_str(o);
+    } else {
+        // error("Binop can only be applied to expressions of same type");
+    }
 }

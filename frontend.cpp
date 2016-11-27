@@ -89,7 +89,8 @@ int main(int argc, char **argv) {
         // cout << res->to_value() << endl;
 
         Compiler c;
-        c.codegen_expression(res_expr);
-        c.dump();
+        // c.codegen_expression(res_expr);
+        // c.dump();
+        c.compile(res_expr);
     }
 }

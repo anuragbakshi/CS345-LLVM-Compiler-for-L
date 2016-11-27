@@ -44,5 +44,11 @@ util: clean util.o
 run: compiler
 	/usr/local/Cellar/llvm38/3.8.1/lib/llvm-3.8/bin/lli <(./compiler 2>&1)
 
+%.elf: llang %.L
+	./llang $*.L 2> $*.ll
+	/usr/local/Cellar/llvm38/3.8.1/lib/llvm-3.8/bin/llc -march=x86-64 -filetype=obj $*.ll
+	gcc -c operations.c -o operations.o
+	gcc $*.o operations.o -o $*
+
 clean:
 	rm -f *.o ast/*.o parser.tab.* lex.yy.* parser.output llang *.ll
