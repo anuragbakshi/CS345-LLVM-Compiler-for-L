@@ -6,7 +6,7 @@
 
 #include "hashmap.h"
 
-#define NEW(type) (type *) malloc(sizeof(type))
+#define NEW(type) (type *) calloc(1, sizeof(type))
 
 typedef enum Type {
     NIL = 0,
