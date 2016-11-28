@@ -46,6 +46,9 @@ run: compiler
 
 %.elf: llang %.L
 	./llang $*.L 2> $*.ll
+	# /usr/local/Cellar/llvm38/3.8.1/lib/llvm-3.8/bin/llc -march=x86-64 -filetype=obj $*.ll -O3
+	# gcc -flto -c operations.c -o operations.o -O3
+	# gcc -flto $*.o operations.o -o $* -O3
 	/usr/local/Cellar/llvm38/3.8.1/lib/llvm-3.8/bin/llc -march=x86-64 -filetype=obj $*.ll
 	gcc -c operations.c -o operations.o
 	gcc $*.o operations.o -o $*
