@@ -1,22 +1,53 @@
 #include "symboltable.h"
 
-symboltable *symboltable_new() {
-    symboltable *st = (symboltable *) malloc(sizeof(symboltable));
+typedef struct symboltable_entry {
+    char *name;
+    lifostack_t values;
+} symboltable_entry;
 
-    st->next = NULL;
-    st->env = hashmap_new();
-
-    return st;
+symboltable_t symboltable_new() {
+    return hashmap_new();
 }
 
-void push(symboltable *st) {
+void push(symboltable_t in, char *id, Object *o) {
+    symboltable_entry *entry;
+
+    if(hashmap_get(in, id, (any_t *) &entry) == MAP_MISSING) {
+        entry = (symboltable_entry *) calloc(1, sizeof(symboltable_entry));
+        hashmap_put(in, id, entry);
+    }
+
+    lifostack_push(entry->values, o);
 }
 
-void pop(symboltable *st) {
+void pop(symboltable_t in, char *id) {
+    symboltable_entry *entry;
+
+    hashmap_get(in, id, (any_t *) &entry);
+    lifostack_pop(entry->values);
 }
 
-void add(symboltable *st, char *id, llvm::Value *e) {
+Object *find(symboltable_t in, char *id) {
+    symboltable_entry *entry;
+    Object *var_val;
+
+    hashmap_get(in, id, (any_t *) &entry);
+    lifostack_peek(entry->values, (any_t *) &var_val);
+
+    return var_val;
 }
 
-llvm::Value *find(symboltable *st, char *id) {
+int copy_entry(symboltable_t out, any_t in) {
+    symboltable_entry *entry = (symboltable_entry *) in;
+
+}
+
+symboltable_t freeze(symboltable_t in) {
+    symboltable_t frozen = symboltable_new();
+
+    hashmap_iterate()
+}
+
+void symboltable_free(symboltable_t in) {
+    hashmap_free(in);
 }

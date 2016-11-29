@@ -72,13 +72,13 @@ void display_any(Object *o);
 
 void error(char *s);
 
-void __force_gen_llvm_use__(void *_, ...) {}
-
-void __force_gen_llvm__() {
-    Type t;
-    Func f;
-    Object o;
-
-    __force_gen_llvm_use__(0, t, f, o);
-    __force_gen_llvm_use__(0, read_string, read_int, plus_str, plus_int, plus_any);
-}
+// void __force_gen_llvm_use__(void *_, ...) {}
+//
+// void __force_gen_llvm__() {
+//     Type t;
+//     Func f;
+//     Object o;
+//
+//     __force_gen_llvm_use__(0, t, f, o);
+//     __force_gen_llvm_use__(0, read_string, read_int, plus_str, plus_int, plus_any);
+// }
