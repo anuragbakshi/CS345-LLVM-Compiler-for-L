@@ -118,3 +118,4 @@ lex.yy.*
 parser.output
 parser.tab.*
 llang
+.ll
