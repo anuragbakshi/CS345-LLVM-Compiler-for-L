@@ -19,6 +19,7 @@ Compiler::Compiler() :
     func_main { llvm::Function::Create(functype_main, llvm::Function::ExternalLinkage, "main", module) },
     entry { llvm::BasicBlock::Create(context, "entrypoint", func_main) },
 
+    t_void { builder.getVoidTy() },
     ptr_void { llvm::PointerType::get(builder.getInt8Ty(), 0) },
     int_1 { builder.getInt1Ty() },
     int_64 { builder.getInt64Ty() },
@@ -44,6 +45,14 @@ Compiler::Compiler() :
     functype_binop { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
     functype_unop { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object }, false) },
     functype_display_any { llvm::FunctionType::get(builder.getVoidTy(), { ptr_struct_Object }, false) },
+
+    functype_symtable_new { llvm::FunctionType::get(ptr_void, false) },
+    functype_symtable_push { llvm::FunctionType::get(t_void, { ptr_void, ptr_void, ptr_struct_Object }, false) },
+    functype_symtable_pop { llvm::FunctionType::get(t_void, { ptr_void, ptr_void }, false) },
+    functype_symtable_find { llvm::FunctionType::get(ptr_struct_Object, { ptr_void, ptr_void }, false) },
+    functype_symtable_free { llvm::FunctionType::get(t_void, { ptr_void }, false) },
+
+    functype_debug { llvm::FunctionType::get(t_void, false) },
 
     // functions
     func_read_string { llvm::Function::Create(functype_read_string, llvm::Function::ExternalLinkage, "read_string", module) },
@@ -73,7 +82,16 @@ Compiler::Compiler() :
     func_isnil_any { llvm::Function::Create(functype_unop, llvm::Function::ExternalLinkage, "isnil_any", module) },
     func_print_any { llvm::Function::Create(functype_unop, llvm::Function::ExternalLinkage, "print_any", module) },
 
-    func_display_any { llvm::Function::Create(functype_display_any, llvm::Function::ExternalLinkage, "display_any", module) }
+    func_display_any { llvm::Function::Create(functype_display_any, llvm::Function::ExternalLinkage, "display_any", module) },
+
+    func_symtable_new { llvm::Function::Create(functype_symtable_new, llvm::Function::ExternalLinkage, "symboltable_new", module) },
+    func_symtable_push { llvm::Function::Create(functype_symtable_push, llvm::Function::ExternalLinkage, "symboltable_push", module) },
+    func_symtable_pop { llvm::Function::Create(functype_symtable_pop, llvm::Function::ExternalLinkage, "symboltable_pop", module) },
+    func_symtable_find { llvm::Function::Create(functype_symtable_find, llvm::Function::ExternalLinkage, "symboltable_find", module) },
+    func_symtable_free { llvm::Function::Create(functype_symtable_free, llvm::Function::ExternalLinkage, "symboltable_free", module) },
+
+    func_debug { llvm::Function::Create(functype_debug, llvm::Function::ExternalLinkage, "debug_print", module) }
+
 {
     std::vector<llvm::Type *> struct_Func_fields { ptr_void, ptr_void };
     struct_Func->setBody(struct_Func_fields);
@@ -86,6 +104,9 @@ void Compiler::compile(Expression *root) {
     blocks.push(entry);
 
     builder.SetInsertPoint(entry);
+
+    // Create symbol table
+    symtable = llvm::CallInst::Create(func_symtable_new, "", blocks.top());
 
     auto final_val = codegen_expression(root);
 
@@ -128,19 +149,22 @@ llvm::Value *Compiler::codegen_branch(AstBranch *e) {
 
     blocks.push(if_block);
     auto gen_if = codegen_expression(e->get_then_exp());
+    auto if_top = blocks.top();
     llvm::BranchInst::Create(after_block, blocks.top());
-    blocks.pop();
-
+    while(blocks.top() != if_block) { blocks.pop(); }
+    
     blocks.push(else_block);
     auto gen_else = codegen_expression(e->get_else_exp());
+    auto else_top = blocks.top();
     llvm::BranchInst::Create(after_block, blocks.top());
-    blocks.pop();
+    while(blocks.top() != else_block) { blocks.pop(); }
+    //blocks.pop();
 
     blocks.push(after_block);
 
     auto phi = llvm::PHINode::Create(ptr_struct_Object, 2, "", blocks.top());
-    phi->addIncoming(gen_if, if_block);
-    phi->addIncoming(gen_else, else_block);
+    phi->addIncoming(gen_if, if_top);
+    phi->addIncoming(gen_else, else_top);
 
     return phi;
 }
@@ -151,8 +175,9 @@ llvm::Value *Compiler::codegen_expressionlist(AstExpressionList *e) {
 }
 
 llvm::Value *Compiler::codegen_identifier(AstIdentifier *e) {
-    std::cout << "\033[1;31mTODO:\033[0m codegen_identifier" << std::endl;
-    return nullptr;
+    llvm::Value *id = builder.CreateGlobalStringPtr(e->get_id());
+    llvm::Value *ret = llvm::CallInst::Create(func_symtable_find, { symtable, id }, "", blocks.top());
+    return ret;
 }
 
 llvm::Value *Compiler::codegen_identifierlist(AstIdentifierList *e) {
@@ -172,8 +197,12 @@ llvm::Value *Compiler::codegen_lambda(AstLambda *e) {
 }
 
 llvm::Value *Compiler::codegen_let(AstLet *e) {
-    std::cout << "\033[1;31mTODO:\033[0m codegen_let" << std::endl;
-    return nullptr;
+    llvm::Value *id = builder.CreateGlobalStringPtr(e->get_id()->get_id());
+    llvm::Value *val = Compiler::codegen_expression(e->get_val());
+    llvm::Value *st_push = llvm::CallInst::Create(func_symtable_push, { symtable, id, val }, "", blocks.top());
+    llvm::Value *ret = Compiler::codegen_expression(e->get_body());
+    llvm::Value *st_pop = llvm::CallInst::Create(func_symtable_pop, { symtable, id }, "", blocks.top());
+    return ret;
 }
 
 llvm::Value *Compiler::codegen_list(AstList *e) {
@@ -310,8 +339,13 @@ llvm::Value *Compiler::codegen_expression(Expression *e) {
         return codegen_read(static_cast<AstRead *>(e));
     }
 
+    case AST_LET: {
+        return codegen_let(static_cast<AstLet *>(e));
+    }
+
     default:
-        std::cout << "TODO: " << e->get_type() << std::endl;
+        std::cout << "TODO: Unknown AST node type " << e->get_type()
+            << std::endl;
     }
 }
 

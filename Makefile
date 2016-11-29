@@ -51,7 +51,11 @@ run: compiler
 	# gcc -flto $*.o operations.o -o $* -O3
 	/usr/local/Cellar/llvm38/3.8.1/lib/llvm-3.8/bin/llc -march=x86-64 -filetype=obj $*.ll
 	gcc -c operations.c -o operations.o
-	gcc $*.o operations.o -o $*
+	gcc -c hashmap.c -o hashmap.o
+	gcc -c symboltable.c -o symboltable.o
+	gcc -c lifostack.c -o lifostack.o
+	gcc -c debug.c -o debug.o
+	gcc $*.o hashmap.o symboltable.o lifostack.o debug.o operations.o -o $*
 
 clean:
 	rm -f *.o ast/*.o parser.tab.* lex.yy.* parser.output llang *.ll

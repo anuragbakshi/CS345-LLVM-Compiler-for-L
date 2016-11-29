@@ -1,5 +1,6 @@
 #include "lifostack.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 typedef struct lifostack_node {
