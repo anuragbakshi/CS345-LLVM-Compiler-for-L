@@ -118,7 +118,10 @@ lex.yy.*
 parser.output
 parser.tab.*
 llang
-.ll
+tests/*.ll
+tests/*.diff
+tests/*.elf
+tests/*.out
 
 old/
 Evaluator.*
