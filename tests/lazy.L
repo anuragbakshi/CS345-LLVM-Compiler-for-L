@@ -1,1 +1,1 @@
-(lambda x. x + x) (print 5)
+((lambda x. x + x) (print 5))

@@ -1,3 +1,6 @@
+#ifndef _OPERATIONS_H_
+#define _OPERATIONS_H_
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -17,6 +20,7 @@ typedef enum Type {
 
 typedef struct Func {
     map_t env;
+    char *formal;
     void *f;
 } Func;
 
@@ -40,6 +44,8 @@ Object *read_int();
 Object *make_int(int64_t i);
 Object *make_string(char *s);
 Object *make_nil();
+
+Func *make_func(void *f, char *formal);
 
 bool assert_predicate(Object *o);
 
@@ -82,3 +88,5 @@ void error(char *s);
 //     __force_gen_llvm_use__(0, t, f, o);
 //     __force_gen_llvm_use__(0, read_string, read_int, plus_str, plus_int, plus_any);
 // }
+
+#endif

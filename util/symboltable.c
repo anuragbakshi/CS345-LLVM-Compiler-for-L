@@ -8,34 +8,41 @@ typedef struct symboltable_entry {
     lifostack_t values;
 } symboltable_entry;
 
-symboltable_t symboltable_new() {
-    return hashmap_new();
+static symboltable_t symtable;
+
+symboltable_t symboltable_get() {
+    return symtable;
 }
 
-void symboltable_push(symboltable_t in, char *id, Object *o) {
+void symboltable_new() {
+    symtable = hashmap_new();
+}
+
+void symboltable_push(char *id, Object *o) {
     symboltable_entry *entry;
 
-    if(hashmap_get(in, id, (any_t *) &entry) == MAP_MISSING) {
+    if(hashmap_get(symtable, id, (any_t *) &entry) == MAP_MISSING) {
         entry = (symboltable_entry *) calloc(1, sizeof(symboltable_entry));
         entry->values = lifostack_new();
-        hashmap_put(in, id, entry);
+        hashmap_put(symtable, id, entry);
     }
 
     lifostack_push(entry->values, o);
 }
 
-void symboltable_pop(symboltable_t in, char *id) {
+void symboltable_pop(char *id) {
     symboltable_entry *entry;
 
-    hashmap_get(in, id, (any_t *) &entry);
+    hashmap_get(symtable, id, (any_t *) &entry);
     lifostack_pop(entry->values);
 }
 
-Object *symboltable_find(symboltable_t in, char *id) {
+Object *symboltable_find(char *id) {
     symboltable_entry *entry;
     Object *var_val;
 
-    if (hashmap_get(in, id, (any_t *) &entry) == MAP_MISSING || lifostack_length(entry->values) == 0) {
+    if (hashmap_get(symtable, id, (any_t *) &entry) == MAP_MISSING
+            || lifostack_length(entry->values) == 0) {
         printf("Identifier %s is not bound in current context\n", id);
         exit(1);
     }
@@ -45,17 +52,6 @@ Object *symboltable_find(symboltable_t in, char *id) {
     return var_val;
 }
 
-int symboltable_copy_entry(symboltable_t out, any_t in) {
-    symboltable_entry *entry = (symboltable_entry *) in;
-
-}
-
-symboltable_t symboltable_freeze(symboltable_t in) {
-    symboltable_t frozen = symboltable_new();
-
-    // hashmap_iterate()
-}
-
-void symboltable_free(symboltable_t in) {
-    hashmap_free(in);
+void symboltable_free() {
+    hashmap_free(symtable);
 }

@@ -49,6 +49,20 @@ Object *make_nil() {
     return nil_obj;
 }
 
+Func *make_func(void *f, char *formal) {
+    Func *func = NEW(Func);
+    func->f = f;
+    func->formal = formal;
+    return func;
+}
+
+Object *make_func_obj(Func *f) {
+    Object *obj = NEW(Object);
+    obj->type = FUNCTION;
+    obj->func_ptr = f;
+    return obj;
+}
+
 bool assert_predicate(Object *o) {
     if(o->type == INT) {
         return o->int_val != 0;
