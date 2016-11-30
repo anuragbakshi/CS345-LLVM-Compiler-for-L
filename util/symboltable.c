@@ -32,7 +32,6 @@ void symboltable_push(char *id, Object *o) {
 
 void symboltable_pop(char *id) {
     symboltable_entry *entry;
-
     hashmap_get(symtable, id, (any_t *) &entry);
     lifostack_pop(entry->values);
 }
@@ -40,8 +39,9 @@ void symboltable_pop(char *id) {
 Object *symboltable_find(char *id) {
     symboltable_entry *entry;
     Object *var_val;
+    int result = hashmap_get(symtable, id, (any_t *) &entry);
 
-    if (hashmap_get(symtable, id, (any_t *) &entry) == MAP_MISSING
+    if (result == MAP_MISSING
             || lifostack_length(entry->values) == 0) {
         printf("Identifier %s is not bound in current context\n", id);
         exit(1);
@@ -50,6 +50,17 @@ Object *symboltable_find(char *id) {
     lifostack_peek(entry->values, (any_t *) &var_val);
 
     return var_val;
+}
+
+int symboltable_copy_entry(any_t item, any_t first, any_t second) {
+    Object* val;
+    lifostack_peek(((symboltable_entry*)second)->values, (any_t *) &val);
+    hashmap_put((map_t)item, first, val);
+    return 0;
+}
+
+void symboltable_copy(map_t map) {
+    hashmap_iterate(symtable, symboltable_copy_entry, map); 
 }
 
 void symboltable_free() {

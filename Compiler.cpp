@@ -53,7 +53,7 @@ Compiler::Compiler() :
     functype_symtable_find { llvm::FunctionType::get(ptr_struct_Object, { ptr_void }, false) },
     functype_symtable_free { llvm::FunctionType::get(t_void, false) },
 
-    functype_make_func { llvm::FunctionType::get(ptr_struct_Func, { ptr_void, ptr_void }, false) },
+    functype_make_func { llvm::FunctionType::get(ptr_struct_Func, { ptr_void, ptr_void, int_1 }, false) },
     functype_make_func_obj { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Func }, false) },
     functype_custom { llvm::FunctionType::get(ptr_struct_Object, false) },
     functype_apply { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
@@ -146,7 +146,8 @@ llvm::Value *Compiler::codegen_wrap(Expression *e) {
 
     llvm::Value *func_obj = llvm::CallInst::Create(func_make_func,
             { llvm::ConstantExpr::getBitCast(func, ptr_void),
-              llvm::ConstantPointerNull::get(ptr_void) }, "", blocks.top());
+              llvm::ConstantPointerNull::get(ptr_void),
+              llvm::ConstantInt::getFalse(int_1) }, "", blocks.top());
     llvm::Value *ret = llvm::CallInst::Create(func_make_func_obj, { func_obj }, "", blocks.top());
 
     return ret;
@@ -251,7 +252,7 @@ llvm::Value *Compiler::codegen_lambda(AstLambda *e) {
     while (blocks.top() != func_entry) blocks.pop();
     blocks.pop();
 
-    llvm::Value *func_obj = llvm::CallInst::Create(func_make_func, { llvm::ConstantExpr::getBitCast(func, ptr_void), id }, "", blocks.top());
+    llvm::Value *func_obj = llvm::CallInst::Create(func_make_func, { llvm::ConstantExpr::getBitCast(func, ptr_void), id, llvm::ConstantInt::getTrue(int_1) }, "", blocks.top());
     llvm::Value *ret = llvm::CallInst::Create(func_make_func_obj, { func_obj }, "", blocks.top());
 
     return ret;

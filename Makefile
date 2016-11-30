@@ -2,8 +2,8 @@ OS = $(shell uname)
 USER = $(shell echo $$USER)
 CXX = c++
 ifeq ($(OS),Darwin)
-CXXLIBS = -ll -I-. -I./ast -L/usr/local/Cellar/llvm38/3.8.1/lib/llvm-3.8/lib -Wl,-search_paths_first -Wl,-headerpad_max_install_names -lLLVMLTO -lLLVMObjCARCOpts -lLLVMSymbolize -lLLVMDebugInfoPDB -lLLVMDebugInfoDWARF -lLLVMMIRParser -lLLVMLibDriver -lLLVMOption -lLLVMTableGen -lLLVMOrcJIT -lLLVMPasses -lLLVMipo -lLLVMVectorize -lLLVMLinker -lLLVMIRReader -lLLVMAsmParser -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMMCJIT -lLLVMLineEditor -lLLVMDebugInfoCodeView -lLLVMInterpreter -lLLVMExecutionEngine -lLLVMRuntimeDyld -lLLVMCodeGen -lLLVMTarget -lLLVMScalarOpts -lLLVMInstCombine -lLLVMInstrumentation -lLLVMProfileData -lLLVMObject -lLLVMMCParser -lLLVMTransformUtils -lLLVMMC -lLLVMBitWriter -lLLVMBitReader -lLLVMAnalysis -lLLVMCore -lLLVMSupport -lz -lpthread -lffi -ledit -lcurses -lm
-CXXFLAGS = -g -I/usr/local/Cellar/llvm38/3.8.1/lib/llvm-3.8/include  -stdlib=libc++ -fPIC -fvisibility-inlines-hidden -Wall -std=c++11 -DNDEBUG   -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS
+CXXLIBS = -ll -I-. -I./ast -L/usr/local/Cellar/llvm/3.8.1/lib -Wl,-search_paths_first -Wl,-headerpad_max_install_names -lLLVMLTO -lLLVMObjCARCOpts -lLLVMSymbolize -lLLVMDebugInfoPDB -lLLVMDebugInfoDWARF -lLLVMMIRParser -lLLVMLibDriver -lLLVMOption -lLLVMTableGen -lLLVMOrcJIT -lLLVMPasses -lLLVMipo -lLLVMVectorize -lLLVMLinker -lLLVMIRReader -lLLVMAsmParser -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMMCJIT -lLLVMLineEditor -lLLVMDebugInfoCodeView -lLLVMInterpreter -lLLVMExecutionEngine -lLLVMRuntimeDyld -lLLVMCodeGen -lLLVMTarget -lLLVMScalarOpts -lLLVMInstCombine -lLLVMInstrumentation -lLLVMProfileData -lLLVMObject -lLLVMMCParser -lLLVMTransformUtils -lLLVMMC -lLLVMBitWriter -lLLVMBitReader -lLLVMAnalysis -lLLVMCore -lLLVMSupport -lz -lpthread -lffi -ledit -lcurses -lm
+CXXFLAGS = -g -I/usr/local/Cellar/llvm/3.8.1/include  -stdlib=libc++ -fPIC -fvisibility-inlines-hidden -Wall -std=c++11 -DNDEBUG   -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS
 else ifeq ($(USER),quang)
 LLVMFLAGS = `llvm-config --cppflags --ldflags --system-libs`
 LIBS = `llvm-config --libs $(LLVM_MODULES)`
@@ -50,7 +50,7 @@ $(TESTLL) : %.ll : llang %.L
 	./llang $*.L 2> $*.ll || true
 
 $(TESTO) : %.o : %.ll
-	/usr/local/Cellar/llvm38/3.8.1/lib/llvm-3.8/bin/llc -march=x86-64 -filetype=obj $*.ll || true
+	/usr/local/Cellar/llvm/3.8.1/bin/llc -march=x86-64 -filetype=obj $*.ll || true
 
 $(TESTELF) : %.elf : %.o $(UTILO)
 	gcc $*.o $(UTILO) -o $*.elf || true

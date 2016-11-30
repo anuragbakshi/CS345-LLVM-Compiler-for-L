@@ -19,7 +19,7 @@ typedef enum Type {
 } Type;
 
 typedef struct Func {
-    map_t env;
+    map_t *env;
     char *formal;
     void *f;
 } Func;
@@ -45,7 +45,7 @@ Object *make_int(int64_t i);
 Object *make_string(char *s);
 Object *make_nil();
 
-Func *make_func(void *f, char *formal);
+Func *make_func(void *f, char *formal, bool copyenv);
 
 bool assert_predicate(Object *o);
 

@@ -1,8 +1,21 @@
 #include "operations.h"
 #include "symboltable.h"
+#include "hashmap.h"
+#include "util.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+
+
+int push_to_symtable(any_t nothing, any_t key, any_t value) {
+    symboltable_push(key, value);
+    return 0;
+}
+
+int pop_from_symtable(any_t nothing, any_t key, any_t value) {
+    symboltable_pop(key);
+    return 0;
+}
 
 Object *apply(Object *func, Object *arg) {
     if (func->type != FUNCTION || func->func_ptr->formal == NULL) {
@@ -11,10 +24,11 @@ Object *apply(Object *func, Object *arg) {
     }
 
     Func *real_func = func->func_ptr;
-    symboltable_push(real_func->formal, arg);
+    hashmap_put(real_func->env, real_func->formal, (any_t*) arg);
+    hashmap_iterate(real_func->env, push_to_symtable, NULL);  
     Object *(*ptr)(void) = (Object *(*)(void)) real_func->f;
     Object *ret = ptr();
-    symboltable_pop(real_func->formal);
+    hashmap_iterate(real_func->env, pop_from_symtable, NULL);  
 
     return ret;
 }
