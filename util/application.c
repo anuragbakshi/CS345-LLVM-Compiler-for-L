@@ -1,7 +1,6 @@
 #include "operations.h"
 #include "symboltable.h"
 #include "hashmap.h"
-#include "util.h"
 
 #include <stdio.h>
 #include <stdlib.h>

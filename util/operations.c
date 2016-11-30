@@ -79,7 +79,7 @@ bool assert_predicate(Object *o) {
     if(o->type == INT) {
         return o->int_val != 0;
     } else {
-        // error("Binop can only be applied to expressions of same type");
+        error("Predicate in conditional must be an integer");
     }
 
     return 0;
@@ -100,13 +100,27 @@ Object *plus_int(Object *a, Object *b) {
     return make_int(a->int_val + b->int_val);
 }
 
+bool is_list(Object *o) {
+    return (o->type > 3 || o->type == 0) && o->list_tail != NIL;
+}
+
+bool is_nil(Object *o) {
+    return o->type == NIL && o->list_tail == NIL;
+}
+
 Object *plus_any(Object *a, Object *b) {
+    if(is_list(a) || is_list(b)) {
+        error("Binop @ is the only legal binop for lists");
+    }
+    if(is_nil(a) || is_nil(b)) {
+        error("Nil can only be used with binop @");
+    }
     if(a->type == INT && b->type == INT) {
         return plus_int(a, b);
     } else if(a->type == STRING && b->type == STRING) {
         return plus_str(a, b);
     } else {
-        // error("Binop can only be applied to expressions of same type");
+        error("Binop can only be applied to expressions of same type");
     }
 
     return NULL;
@@ -117,10 +131,19 @@ Object *minus_int(Object *a, Object *b) {
 }
 
 Object *minus_any(Object *a, Object *b) {
+    if(is_list(a) || is_list(b)) {
+        error("Binop @ is the only legal binop for lists");
+    }
+    if(is_nil(a) || is_nil(b)) {
+        error("Nil can only be used with binop @");
+    }
+    if(a->type == STRING && b->type == STRING) {
+        error("Binop - cannot be applied to strings");
+    }
     if(a->type == INT && b->type == INT) {
         return minus_int(a, b);
     } else {
-        // error("Binop can only be applied to expressions of same type");
+        error("Binop can only be applied to expressions of same type");
     }
 
     return NULL;
@@ -131,10 +154,19 @@ Object *times_int(Object *a, Object *b) {
 }
 
 Object *times_any(Object *a, Object *b) {
+    if(is_list(a) || is_list(b)) {
+        error("Binop @ is the only legal binop for lists");
+    }
+    if(is_nil(a) || is_nil(b)) {
+        error("Nil can only be used with binop @");
+    }
+    if(a->type == STRING && b->type == STRING) {
+        error("Binop * cannot be applied to strings");
+    }
     if(a->type == INT && b->type == INT) {
         return times_int(a, b);
     } else {
-        // error("Binop can only be applied to expressions of same type");
+        error("Binop can only be applied to expressions of same type");
     }
 
     return NULL;
@@ -145,10 +177,19 @@ Object *divide_int(Object *a, Object *b) {
 }
 
 Object *divide_any(Object *a, Object *b) {
+    if(is_list(a) || is_list(b)) {
+        error("Binop @ is the only legal binop for lists");
+    }
+    if(is_nil(a) || is_nil(b)) {
+        error("Nil can only be used with binop @");
+    }
+    if(a->type == STRING && b->type == STRING) {
+        error("Binop / cannot be applied to strings");
+    }
     if(a->type == INT && b->type == INT) {
         return divide_int(a, b);
     } else {
-        // error("Binop can only be applied to expressions of same type");
+        error("Binop can only be applied to expressions of same type");
     }
 
     return NULL;
@@ -162,10 +203,19 @@ Object *and_int(Object *a, Object *b) {
 }
 
 Object *and_any(Object *a, Object *b) {
+    if(is_list(a) || is_list(b)) {
+        error("Binop @ is the only legal binop for lists");
+    }
+    if(is_nil(a) || is_nil(b)) {
+        error("Nil can only be used with binop @");
+    }
+    if(a->type == STRING && b->type == STRING) {
+        error("Binop & cannot be applied to strings");
+    }
     if(a->type == INT && b->type == INT) {
         return and_int(a, b);
     } else {
-        // error("Binop can only be applied to expressions of same type");
+        error("Binop can only be applied to expressions of same type");
     }
 
     return NULL;
@@ -179,10 +229,19 @@ Object *or_int(Object *a, Object *b) {
 }
 
 Object *or_any(Object *a, Object *b) {
+    if(is_list(a) || is_list(b)) {
+        error("Binop @ is the only legal binop for lists");
+    }
+    if(is_nil(a) || is_nil(b)) {
+        error("Nil can only be used with binop @");
+    }
+    if(a->type == STRING && b->type == STRING) {
+        error("Binop | cannot be applied to strings");
+    }
     if(a->type == INT && b->type == INT) {
         return or_int(a, b);
     } else {
-        // error("Binop can only be applied to expressions of same type");
+        error("Binop can only be applied to expressions of same type");
     }
 
     return NULL;
@@ -203,12 +262,18 @@ Object *eq_str(Object *a, Object *b) {
 }
 
 Object *eq_any(Object *a, Object *b) {
+    if(is_list(a) || is_list(b)) {
+        error("Binop @ is the only legal binop for lists");
+    }
+    if(is_nil(a) || is_nil(b)) {
+        error("Nil can only be used with binop @");
+    }
     if(a->type == INT && b->type == INT) {
         return eq_int(a, b);
     } else if(a->type == STRING && b->type == STRING) {
         return eq_str(a, b);
     } else {
-        // error("Binop can only be applied to expressions of same type");
+        error("Binop can only be applied to expressions of same type");
     }
 
     return NULL;
@@ -229,12 +294,18 @@ Object *neq_str(Object *a, Object *b) {
 }
 
 Object *neq_any(Object *a, Object *b) {
+    if(is_list(a) || is_list(b)) {
+        error("Binop @ is the only legal binop for lists");
+    }
+    if(is_nil(a) || is_nil(b)) {
+        error("Nil can only be used with binop @");
+    }
     if(a->type == INT && b->type == INT) {
         return neq_int(a, b);
     } else if(a->type == STRING && b->type == STRING) {
         return neq_str(a, b);
     } else {
-        // error("Binop can only be applied to expressions of same type");
+        error("Binop can only be applied to expressions of same type");
     }
 
     return NULL;
@@ -248,10 +319,19 @@ Object *lt_int(Object *a, Object *b) {
 }
 
 Object *lt_any(Object *a, Object *b) {
+    if(is_list(a) || is_list(b)) {
+        error("Binop @ is the only legal binop for lists");
+    }
+    if(is_nil(a) || is_nil(b)) {
+        error("Nil can only be used with binop @");
+    }
+    if(a->type == STRING && b->type == STRING) {
+        error("Binop < cannot be applied to strings");
+    }
     if(a->type == INT && b->type == INT) {
         return lt_int(a, b);
     } else {
-        // error("Binop can only be applied to expressions of same type");
+        error("Binop can only be applied to expressions of same type");
     }
 
     return NULL;
@@ -265,10 +345,19 @@ Object *leq_int(Object *a, Object *b) {
 }
 
 Object *leq_any(Object *a, Object *b) {
+    if(is_list(a) || is_list(b)) {
+        error("Binop @ is the only legal binop for lists");
+    }
+    if(is_nil(a) || is_nil(b)) {
+        error("Nil can only be used with binop @");
+    }
+    if(a->type == STRING && b->type == STRING) {
+        error("Binop <= cannot be applied to strings");
+    }
     if(a->type == INT && b->type == INT) {
         return leq_int(a, b);
     } else {
-        // error("Binop can only be applied to expressions of same type");
+        error("Binop can only be applied to expressions of same type");
     }
 
     return NULL;
@@ -282,10 +371,19 @@ Object *gt_int(Object *a, Object *b) {
 }
 
 Object *gt_any(Object *a, Object *b) {
+    if(is_list(a) || is_list(b)) {
+        error("Binop @ is the only legal binop for lists");
+    }
+    if(is_nil(a) || is_nil(b)) {
+        error("Nil can only be used with binop @");
+    }
+    if(a->type == STRING && b->type == STRING) {
+        error("Binop > cannot be applied to strings");
+    }
     if(a->type == INT && b->type == INT) {
         return gt_int(a, b);
     } else {
-        // error("Binop can only be applied to expressions of same type");
+        error("Binop can only be applied to expressions of same type");
     }
 
     return NULL;
@@ -299,10 +397,19 @@ Object *geq_int(Object *a, Object *b) {
 }
 
 Object *geq_any(Object *a, Object *b) {
+    if(is_list(a) || is_list(b)) {
+        error("Binop @ is the only legal binop for lists");
+    }
+    if(is_nil(a) || is_nil(b)) {
+        error("Nil can only be used with binop @");
+    }
+    if(a->type == STRING && b->type == STRING) {
+        error("Binop >= cannot be applied to strings");
+    }
     if(a->type == INT && b->type == INT) {
         return geq_int(a, b);
     } else {
-        // error("Binop can only be applied to expressions of same type");
+        error("Binop can only be applied to expressions of same type");
     }
 
     return NULL;
@@ -326,7 +433,7 @@ Object *cons_any(Object *a, Object *b) {
 }
 
 Object *hd_any(Object *o) {
-    if(o->type > 3) { // Is List
+    if(is_list(o)) { // Is List
         return o->list_head;
     } else {
         return o;
@@ -336,7 +443,7 @@ Object *hd_any(Object *o) {
 }
 
 Object *tl_any(Object *o) {
-    if(o->type > 3) { // Is List
+    if(is_list(o)) { // Is List
         return o->list_tail;
     } else {
         return make_nil();
@@ -372,7 +479,7 @@ void display_str(Object *o) {
 }
 
 void display_function(Object *o) {
-    printf("TODO: not supported");
+    printf("<function at 0x%016x>", o->func_ptr->f);
 }
 
 void display_list(Object *o) {

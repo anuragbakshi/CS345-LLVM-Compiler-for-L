@@ -20,6 +20,7 @@ LLVMFLAGS = `llvm-config --cppflags --ldflags --system-libs`
 LIBS = `llvm-config --libs $(LLVM_MODULES)`
 CXXLIBS = -I-. -I./ast /mnt/share/flex-2.5.35/libfl.a $(LIBS)
 CXXFLAGS = -g -Wall -std=c++1y $(LLVMFLAGS)
+LLC = llc
 else
 CXXLIBS = -lfl -I-. -I./ast
 CXXFLAGS = -g -Wall -std=c++1y
