@@ -1,4 +1,5 @@
 #include "operations.h"
+#include "symboltable.h"
 
 Object *read_string() {
     char *input = NULL;
@@ -49,10 +50,16 @@ Object *make_nil() {
     return nil_obj;
 }
 
-Func *make_func(void *f, char *formal) {
+Func *make_func(void *f, char *formal, bool copyenv) {
     Func *func = NEW(Func);
     func->f = f;
     func->formal = formal;
+    if(copyenv) {
+        func->env = hashmap_new();
+        symboltable_copy(func->env);
+    } else {
+        func->env = NULL;
+    }
     return func;
 }
 
@@ -360,7 +367,7 @@ void display_str(Object *o) {
 }
 
 void display_function(Object *o) {
-    error("TODO: not supported");
+    printf("TODO: not supported");
 }
 
 void display_list(Object *o) {

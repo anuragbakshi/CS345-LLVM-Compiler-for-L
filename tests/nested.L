@@ -1,1 +1,1 @@
-((lambda x, y. x + y) 4 5)
+((lambda x. lambda y. x + y) 4 5)
