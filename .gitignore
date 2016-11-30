@@ -119,6 +119,7 @@ parser.output
 parser.tab.*
 llang
 tests/*.ll
+tests/*.bc
 tests/*.diff
 tests/*.elf
 tests/*.out
