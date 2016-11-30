@@ -17,6 +17,18 @@ int pop_from_symtable(any_t nothing, any_t key, any_t value) {
     return 0;
 }
 
+void push_func_env(Func* real_func) {
+    if(real_func->env != NULL) {
+        hashmap_iterate(real_func->env, push_to_symtable, NULL);  
+    }
+}
+
+void pop_func_env(Func* real_func) {
+    if(real_func->env != NULL) { 
+        hashmap_iterate(real_func->env, pop_from_symtable, NULL);  
+    }
+}
+
 Object *apply(Object *func, Object *arg) {
     if (func->type != FUNCTION || func->func_ptr->formal == NULL) {
         printf("Only lambda expressions can be applied to other expressions\n");
@@ -25,13 +37,14 @@ Object *apply(Object *func, Object *arg) {
 
     Func *real_func = func->func_ptr;
     hashmap_put(real_func->env, real_func->formal, (any_t*) arg);
-    hashmap_iterate(real_func->env, push_to_symtable, NULL);  
+    push_func_env(real_func);
     Object *(*ptr)(void) = (Object *(*)(void)) real_func->f;
     Object *ret = ptr();
-    hashmap_iterate(real_func->env, pop_from_symtable, NULL);  
+    pop_func_env(real_func);
 
     return ret;
 }
+
 
 Object *eval_identifier(char *id) {
     Object *obj = symboltable_find(id);
@@ -39,7 +52,10 @@ Object *eval_identifier(char *id) {
         // lazy argument, so evaluate it
         Func *func = obj->func_ptr;
         Object *(*ptr)(void) = (Object *(*)(void)) func->f;
-        return ptr();
+        push_func_env(func);
+        Object* res = ptr();
+        pop_func_env(func);
+        return res;
     } else {
         return obj;
     }

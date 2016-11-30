@@ -62,10 +62,10 @@ $(TESTLL) : %.ll : llang %.L
 	./llang $*.L 2> $*.ll || true
 
 $(TESTO) : %.o : %.ll
-	$(LLC) -march=x86-64 -filetype=obj $*.ll || true
+	$(LLC) -march=x86-64 -filetype=obj $*.ll -O3 || true
 
 $(TESTELF) : %.elf : %.o $(UTILO)
-	gcc $*.o $(UTILO) -o $*.elf || true
+	gcc $*.o $(UTILO) -o $*.elf -O3 || true
 
 OUTS = $(patsubst %.L, %.out, $(TESTL))
 DIFFS = $(patsubst %.L, %.diff, $(TESTL))

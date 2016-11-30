@@ -56,8 +56,11 @@ Object *symboltable_find(char *id) {
 
 int symboltable_copy_entry(any_t item, any_t first, any_t second) {
     Object* val;
-    lifostack_peek(((symboltable_entry*)second)->values, (any_t *) &val);
-    hashmap_put((map_t)item, first, val);
+    symboltable_entry *entry = (symboltable_entry*)second;
+    if(lifostack_length(entry->values) != 0) { 
+        lifostack_peek(entry->values, (any_t *) &val);
+        hashmap_put((map_t)item, first, val);
+    }
     return 0;
 }
 

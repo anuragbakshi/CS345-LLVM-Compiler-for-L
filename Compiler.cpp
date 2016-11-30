@@ -147,7 +147,7 @@ llvm::Value *Compiler::codegen_wrap(Expression *e) {
     llvm::Value *func_obj = llvm::CallInst::Create(func_make_func,
             { llvm::ConstantExpr::getBitCast(func, ptr_void),
               llvm::ConstantPointerNull::get(ptr_void),
-              llvm::ConstantInt::getFalse(int_1) }, "", blocks.top());
+              llvm::ConstantInt::getTrue(int_1) }, "", blocks.top());
     llvm::Value *ret = llvm::CallInst::Create(func_make_func_obj, { func_obj }, "", blocks.top());
 
     return ret;

@@ -57,6 +57,8 @@ Func *make_func(void *f, char *formal, bool copyenv) {
     if(copyenv) {
         func->env = hashmap_new();
         symboltable_copy(func->env);
+    } else {
+        func->env = NULL;
     }
     return func;
 }
@@ -365,7 +367,7 @@ void display_str(Object *o) {
 }
 
 void display_function(Object *o) {
-    error("TODO: not supported");
+    printf("TODO: not supported");
 }
 
 void display_list(Object *o) {
