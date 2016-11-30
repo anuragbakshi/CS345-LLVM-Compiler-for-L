@@ -21,9 +21,11 @@ void symboltable_new() {
 void symboltable_push(char *id, Object *o) {
     symboltable_entry *entry;
 
-    if(hashmap_get(symtable, id, (any_t *) &entry) == MAP_MISSING) {
+    if (hashmap_get(symtable, id, (any_t *) &entry) == MAP_MISSING) {
         entry = (symboltable_entry *) calloc(1, sizeof(symboltable_entry));
         entry->values = lifostack_new();
+        entry->name = (char *) calloc(strlen(id) + 1, sizeof(char));
+        strcpy(entry->name, id);
         hashmap_put(symtable, id, entry);
     }
 
