@@ -13,7 +13,7 @@ extern symboltable_t symboltable_get();
 extern void symboltable_new(uint64_t size);
 extern void symboltable_push(uint64_t id, Object *o);
 extern void symboltable_pop(uint64_t id);
-extern Object *symboltable_find(uint64_t id);
+extern Object *symboltable_find(uint64_t id, char *name);
 extern void symboltable_free();
 extern void symboltable_copy(env_t env);
 

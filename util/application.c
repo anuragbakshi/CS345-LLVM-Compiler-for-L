@@ -67,8 +67,8 @@ Object *apply(Object *func, Object *arg) {
 }
 
 
-Object *eval_identifier(uint64_t id) {
-    Object *obj = symboltable_find(id);
+Object *eval_identifier(uint64_t id, char *name) {
+    Object *obj = symboltable_find(id, name);
     if (obj->type == FUNCTION && obj->func_ptr->formal == 0) {
         // lazy argument, so evaluate it
         Func *func = obj->func_ptr;

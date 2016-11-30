@@ -127,10 +127,10 @@ class Compiler {
     llvm::Function *unop_funcs[4] { func_hd_any, func_tl_any, func_isnil_any, func_print_any };
 
     // name/id lookup tables
-    std::vector<std::string> id_to_name;
+    std::vector<llvm::Value *> id_to_name_val;
     std::unordered_map<std::string, uint64_t> name_to_id;
 
-    std::string get_name_for_id(uint64_t id);
+    llvm::Value *get_name_val_for_id(uint64_t id);
     uint64_t get_id_for_name(std::string name);
 
     llvm::Value *codegen_error(Expression *e, char *s);

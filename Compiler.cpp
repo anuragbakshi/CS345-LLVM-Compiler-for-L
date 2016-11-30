@@ -50,14 +50,14 @@ Compiler::Compiler() :
     functype_symtable_new { llvm::FunctionType::get(t_void, { int_64 }, false) },
     functype_symtable_push { llvm::FunctionType::get(t_void, { int_64, ptr_struct_Object }, false) },
     functype_symtable_pop { llvm::FunctionType::get(t_void, { int_64 }, false) },
-    functype_symtable_find { llvm::FunctionType::get(ptr_struct_Object, { int_64 }, false) },
+    functype_symtable_find { llvm::FunctionType::get(ptr_struct_Object, { int_64, ptr_void }, false) },
     functype_symtable_free { llvm::FunctionType::get(t_void, false) },
 
     functype_make_func { llvm::FunctionType::get(ptr_struct_Func, { ptr_void, int_64, int_1 }, false) },
     functype_make_func_obj { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Func }, false) },
     functype_custom { llvm::FunctionType::get(ptr_struct_Object, false) },
     functype_apply { llvm::FunctionType::get(ptr_struct_Object, { ptr_struct_Object, ptr_struct_Object }, false) },
-    functype_eval_identifier { llvm::FunctionType::get(ptr_struct_Object, { int_64 }, false) },
+    functype_eval_identifier { llvm::FunctionType::get(ptr_struct_Object, { int_64, ptr_void }, false) },
 
     functype_debug { llvm::FunctionType::get(t_void, false) },
 
@@ -113,7 +113,8 @@ Compiler::Compiler() :
     struct_Object->setBody(struct_Func_fields);
 
     // 0 can't be an id
-    id_to_name.push_back("");
+    // id_to_name.push_back("");
+    id_to_name_val.push_back(nullptr);
 }
 
 void Compiler::compile(Expression *root) {
@@ -129,22 +130,37 @@ void Compiler::compile(Expression *root) {
     llvm::CallInst::Create(func_display_any, { final_val }, "", blocks.top());
     llvm::ReturnInst::Create(context, llvm::ConstantInt::get(builder.getInt32Ty(), 0), blocks.top());
 
-    llvm::CallInst::Create(func_symtable_new, { llvm::ConstantInt::get(int_64, id_to_name.size()) }, "", entry);
+    // llvm::CallInst::Create(func_symtable_new, { llvm::ConstantInt::get(int_64, id_to_name.size()) }, "", entry);
+    llvm::CallInst::Create(func_symtable_new, { llvm::ConstantInt::get(int_64, id_to_name_val.size()) }, "", entry);
     llvm::BranchInst::Create(programmain, entry);
+
+    // std::vector<llvm::Constant *> name_vals;
+    // for(uint64_t i = 0; i < id_to_name.size(); ++i) {
+    //     // name_vals.push_back(builder.CreateGlobalStringPtr(id_to_name[i]));
+    //     name_vals.push_back(llvm::ConstantDataArray::get(context, std::vector<uint8_t> { id_to_name[i].begin(), id_to_name[i].end() }));
+    // }
+    //
+    // auto name_vals_type = llvm::ArrayType::get(ptr_void, name_vals.size());
+    // auto name_vals_array = llvm::ConstantArray::get(name_vals_type, name_vals);
+
+
 
     module->dump();
 }
 
-std::string Compiler::get_name_for_id(uint64_t id) {
-    return id_to_name[id];
+llvm::Value *Compiler::get_name_val_for_id(uint64_t id) {
+    // return id_to_name[id];
+    return id_to_name_val[id];
 }
 
 uint64_t Compiler::get_id_for_name(std::string name) {
     auto entry = name_to_id.find(name);
     if(entry == name_to_id.end()) {
-        auto id = id_to_name.size();
+        // auto id = id_to_name.size();
+        auto id = id_to_name_val.size();
 
-        id_to_name.push_back(name);
+        // id_to_name.push_back(name);
+        id_to_name_val.push_back(builder.CreateGlobalStringPtr(name));
         name_to_id[name] = id;
 
         return id;
@@ -251,8 +267,10 @@ llvm::Value *Compiler::codegen_expressionlist(AstExpressionList *e) {
 llvm::Value *Compiler::codegen_identifier(AstIdentifier *e) {
     // llvm::Value *id = builder.CreateGlobalStringPtr(e->get_id());
     // llvm::Value *ret = llvm::CallInst::Create(func_eval_identifier, { id }, "", blocks.top());
-    llvm::Value *id = llvm::ConstantInt::get(int_64, get_id_for_name(e->get_id()));
-    llvm::Value *ret = llvm::CallInst::Create(func_eval_identifier, { id }, "", blocks.top());
+    uint64_t int_id = get_id_for_name(e->get_id());
+    llvm::Value *id = llvm::ConstantInt::get(int_64, int_id);
+    // llvm::Value *ret = llvm::CallInst::Create(func_eval_identifier, { id }, "", blocks.top());
+    llvm::Value *ret = llvm::CallInst::Create(func_eval_identifier, { id, get_name_val_for_id(int_id) }, "", blocks.top());
     return ret;
 }
 

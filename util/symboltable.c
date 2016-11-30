@@ -50,7 +50,7 @@ void symboltable_pop(uint64_t id) {
     lifostack_pop(symtable[id]);
 }
 
-Object *symboltable_find(uint64_t id) {
+Object *symboltable_find(uint64_t id, char *name) {
     // symboltable_entry *entry;
     // Object *var_val;
     // int result = hashmap_get(symtable, id, (any_t *) &entry);
@@ -68,7 +68,8 @@ Object *symboltable_find(uint64_t id) {
     if(lifostack_length(symtable[id]) == 0) {
         // printf("Identifier %s is not bound in current context\n", id);
         // TODO: keep names in big array in compiled program
-        printf("Identifier %d is not bound in current context\n", id);
+        // printf("Identifier %d is not bound in current context\n", id);
+        printf("Identifier %s is not bound in current context\n", name);
         exit(1);
     }
 
