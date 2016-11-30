@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "hashmap.h"
+// #include "hashmap.h"
 
 #define NEW(type) (type *) calloc(1, sizeof(type))
 
@@ -18,9 +18,12 @@ typedef enum Type {
     FUNCTION
 } Type;
 
+struct Object;
+
 typedef struct Func {
-    map_t *env;
-    char *formal;
+    // map_t *env;
+    struct Object **env;
+    uint64_t formal;
     void *f;
 } Func;
 
@@ -45,7 +48,7 @@ Object *make_int(int64_t i);
 Object *make_string(char *s);
 Object *make_nil();
 
-Func *make_func(void *f, char *formal, bool copyenv);
+Func *make_func(void *f, uint64_t formal, bool copyenv);
 
 bool assert_predicate(Object *o);
 

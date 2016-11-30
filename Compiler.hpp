@@ -13,6 +13,8 @@
 #include <llvm/IR/IRBuilder.h>
 
 #include <stack>
+#include <vector>
+#include <unordered_map>
 
 // #include "SymbolTable.hpp"
 
@@ -123,6 +125,13 @@ class Compiler {
     // helper lookup tables
     llvm::Function *binop_funcs[13] { func_plus_any, func_minus_any, func_times_any, func_divide_any, func_and_any, func_or_any, func_eq_any, func_neq_any, func_lt_any, func_leq_any, func_gt_any, func_geq_any, func_cons_any };
     llvm::Function *unop_funcs[4] { func_hd_any, func_tl_any, func_isnil_any, func_print_any };
+
+    // name/id lookup tables
+    std::vector<std::string> id_to_name;
+    std::unordered_map<std::string, uint64_t> name_to_id;
+
+    std::string get_name_for_id(uint64_t id);
+    uint64_t get_id_for_name(std::string name);
 
     llvm::Value *codegen_error(Expression *e, char *s);
 

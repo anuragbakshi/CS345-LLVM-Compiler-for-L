@@ -1,6 +1,9 @@
 #include "operations.h"
 #include "symboltable.h"
 
+extern uint64_t symtable_size;
+extern symboltable_t symtable;
+
 Object *read_string() {
     char *input = NULL;
     size_t size = 0;
@@ -50,12 +53,14 @@ Object *make_nil() {
     return nil_obj;
 }
 
-Func *make_func(void *f, char *formal, bool copyenv) {
+Func *make_func(void *f, uint64_t formal, bool copyenv) {
     Func *func = NEW(Func);
     func->f = f;
     func->formal = formal;
     if(copyenv) {
-        func->env = hashmap_new();
+        // func->env = hashmap_new();
+        // symboltable_copy(func->env);
+        func->env = calloc(symtable_size, sizeof(Object *));
         symboltable_copy(func->env);
     } else {
         func->env = NULL;

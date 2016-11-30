@@ -8,8 +8,8 @@ LLINC = -I/usr/local/Cellar/llvm/3.8.1/include
 LLLIB = -L/usr/local/Cellar/llvm/3.8.1/lib
 else
 LLC = /usr/local/Cellar/llvm38/3.8.1/lib/llvm-3.8/bin/llc
-LLINC = -I/usr/local/Cellar/llvm38/3.8.1/lib/llvm-3.8/include 
-LLLIB = -L/usr/local/Cellar/llvm38/3.8.1/lib/llvm-3.8/lib 
+LLINC = -I/usr/local/Cellar/llvm38/3.8.1/lib/llvm-3.8/include
+LLLIB = -L/usr/local/Cellar/llvm38/3.8.1/lib/llvm-3.8/lib
 endif
 
 ifeq ($(OS),Darwin)
@@ -45,13 +45,13 @@ parser.tab.c: parser.y parser-defs.h
 	bison -dv parser.y
 
 $(OFILES) : %.o : %.cpp
-	$(CXX) $(CXXFLAGS) -c $*.cpp -o $*.o
+	$(CXX) $(CXXFLAGS) -c $*.cpp -o $*.o -g
 
 UTILC = $(wildcard util/*.c)
 UTILO = $(patsubst %.c, %.o, $(UTILC))
 
 $(UTILO) : %.o : %.c
-	gcc -c $*.c -o $*.o
+	gcc -c $*.c -o $*.o -g
 
 TESTL = $(wildcard tests/*.L)
 TESTLL = $(patsubst %.L, %.ll, $(TESTL))
@@ -65,7 +65,7 @@ $(TESTO) : %.o : %.ll
 	$(LLC) -march=x86-64 -filetype=obj $*.ll -O3 || true
 
 $(TESTELF) : %.elf : %.o $(UTILO)
-	gcc $*.o $(UTILO) -o $*.elf -O3 || true
+	gcc $*.o $(UTILO) -o $*.elf -O3 -g || true
 
 OUTS = $(patsubst %.L, %.out, $(TESTL))
 DIFFS = $(patsubst %.L, %.diff, $(TESTL))
