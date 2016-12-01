@@ -4,6 +4,17 @@
 extern uint64_t symtable_size;
 extern symboltable_t symtable;
 
+void push_to_env(map_node **env, uint64_t id, Object *val) {
+    map_node *new_node = NEW(map_node); 
+    new_node->id = id;
+    new_node->val = val;
+    new_node->next = NULL;
+    while(*env != NULL) {
+        env = &(*env)->next;
+    }
+    *env = new_node;
+}
+
 Object *read_string() {
     char *input = NULL;
     size_t size = 0;
@@ -57,14 +68,12 @@ Func *make_func(void *f, uint64_t formal, bool copyenv) {
     Func *func = NEW(Func);
     func->f = f;
     func->formal = formal;
+    func->env = NULL;
     if(copyenv) {
         // func->env = hashmap_new();
         // symboltable_copy(func->env);
-        func->env = calloc(symtable_size, sizeof(Object *));
         symboltable_copy(func->env);
-    } else {
-        func->env = NULL;
-    }
+    } 
     return func;
 }
 

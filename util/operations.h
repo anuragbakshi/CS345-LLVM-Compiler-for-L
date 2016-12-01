@@ -20,9 +20,14 @@ typedef enum Type {
 
 struct Object;
 
+typedef struct map_node {
+    map_node *next;
+    uint64_t id;
+    Object *val;
+} map_node;
+
 typedef struct Func {
-    // map_t *env;
-    struct Object **env;
+    map_node *head;
     uint64_t formal;
     void *f;
 } Func;
@@ -40,6 +45,8 @@ typedef struct Object {
         Func *func_ptr;
     };
 } Object;
+
+void push_to_env(map_node** env, uint64_t id, Object* obj);
 
 Object *read_string();
 Object *read_int();

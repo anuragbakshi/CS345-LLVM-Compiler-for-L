@@ -27,24 +27,20 @@ extern symboltable_t symtable;
 // }
 
 void push_func_env(Func* real_func) {
-    if(real_func->env != NULL) {
-        // hashmap_iterate(real_func->env, push_to_symtable, NULL);
-        for(uint64_t i = 0; i < symtable_size; ++i) {
-            if(real_func->env[i] != NULL) {
-                symboltable_push(i, real_func->env[i]);
-            }
-        }
+    map_node* top = real_func->env;
+     
+    while(top != NULL) {
+        symboltable_push(top->id, top->val);
+        top = map_node->next;
     }
 }
 
 void pop_func_env(Func* real_func) {
-    if(real_func->env != NULL) {
-        // hashmap_iterate(real_func->env, pop_from_symtable, NULL);
-        for(uint64_t i = 0; i < symtable_size; ++i) {
-            if(real_func->env[i] != NULL) {
-                symboltable_pop(i);
-            }
-        }
+    map_node* top = real_func->env;
+     
+    while(top != NULL) {
+        symboltable_pop(top->id);
+        top = map_node->next;
     }
 }
 
@@ -56,7 +52,7 @@ Object *apply(Object *func, Object *arg) {
 
     Func *real_func = func->func_ptr;
     // hashmap_put(real_func->env, real_func->formal, (any_t*) arg);
-    real_func->env[real_func->formal] = arg;
+    push_to_env(real_func->env, real_func->formal, arg);
     push_func_env(real_func);
     Object *(*ptr)(void) = (Object *(*)(void)) real_func->f;
     Object *ret = ptr();

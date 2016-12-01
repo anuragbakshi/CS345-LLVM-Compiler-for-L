@@ -96,7 +96,9 @@ Object *symboltable_find(uint64_t id, char *name) {
 void symboltable_copy(env_t env) {
     for(uint64_t i = 0; i < symtable_size; ++i) {
         if(lifostack_length(symtable[i]) != 0) {
-            lifostack_peek(symtable[i], (any_t *) &env[i]);
+            Object *entry;
+            lifostack_peek(symtable[i], (any_t *)&entry);
+            push_to_env(env, i, entry); 
         }
     }
 }
