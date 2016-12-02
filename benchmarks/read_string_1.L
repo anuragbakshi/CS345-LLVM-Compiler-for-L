@@ -1,0 +1,3 @@
+let _ = readString in
+let _ = readString in
+0

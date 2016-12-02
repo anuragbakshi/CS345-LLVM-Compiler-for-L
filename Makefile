@@ -33,6 +33,8 @@ UTILO = $(patsubst %.c, %.o, $(UTILC))
 $(UTILO) : %.o : %.c
 	gcc -c $*.c -o $*.o -g
 
+TESTL = $(wildcard tests/*.L)
+
 %.ll : llang %.L
 	./llang $*.L 2> $*.ll || true
 
@@ -41,6 +43,7 @@ $(UTILO) : %.o : %.c
 
 %.elf : %.o $(UTILO)
 	gcc $*.o $(UTILO) -o $*.elf -O3 -g || true
+
 
 OUTS = $(patsubst %.L, %.out, $(TESTL))
 DIFFS = $(patsubst %.L, %.diff, $(TESTL))
@@ -66,4 +69,4 @@ $(RESULTS) : %.result : .FORCE %.diff
 test: $(RESULTS)
 
 clean:
-	rm -f *.o ast/*.o parser.tab.* lex.yy.* parser.output llang *.ll util/*.o tests/*.ll tests/*.o tests/*.elf tests/*.out tests/*.result tests/*.diff
+	rm -f *.o ast/*.o parser.tab.* lex.yy.* parser.output llang *.ll util/*.o tests/*.ll tests/*.o tests/*.elf tests/*.out tests/*.result tests/*.diff benchmarks/*.ll benchmarks/*.elf benchmarks/*.o

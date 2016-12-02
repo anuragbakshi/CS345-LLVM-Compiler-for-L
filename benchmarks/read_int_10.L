@@ -1,0 +1,12 @@
+let _ = readInt in
+let _ = readInt in
+let _ = readInt in
+let _ = readInt in
+let _ = readInt in
+let _ = readInt in
+let _ = readInt in
+let _ = readInt in
+let _ = readInt in
+let _ = readInt in
+let _ = readInt in
+0

@@ -1,0 +1,10 @@
+This was tested on the clean 16.04 LTS Ubuntu Desktop Edition.
+To build the compiler:
+1. sudo apt-get install llvm
+2. sudo apt-get install flex
+3. sudo apt-get install bison
+4. make
+
+To compile and run a ELF executable for an L source file of the name file.L:
+1. make file.elf
+2. ./file.elf

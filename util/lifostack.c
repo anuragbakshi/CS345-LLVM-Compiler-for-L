@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 typedef struct lifostack_node {
-    any_t data;
+    lifostack_t data;
     struct lifostack_node *next;
 } lifostack_node;
 
@@ -21,7 +21,7 @@ lifostack_t lifostack_new() {
     return s;
 }
 
-void lifostack_push(lifostack_t in, any_t value) {
+void lifostack_push(lifostack_t in, lifostack_t value) {
     lifostack *s = (lifostack *) in;
 
     lifostack_node *node = (lifostack_node *) calloc(1, sizeof(lifostack_node));
@@ -33,7 +33,7 @@ void lifostack_push(lifostack_t in, any_t value) {
 }
 
 // TODO: assumes stack is not empty
-void lifostack_peek(lifostack_t in, any_t *arg) {
+void lifostack_peek(lifostack_t in, lifostack_t *arg) {
     lifostack *s = (lifostack *) in;
 
     *arg = s->items->data;

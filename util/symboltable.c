@@ -29,7 +29,7 @@ void symboltable_new(uint64_t size) {
 void symboltable_push(uint64_t id, Object *o) {
     // symboltable_entry *entry;
     //
-    // if (hashmap_get(symtable, id, (any_t *) &entry) == MAP_MISSING) {
+    // if (hashmap_get(symtable, id, (lifostack_t *) &entry) == MAP_MISSING) {
     //     entry = (symboltable_entry *) calloc(1, sizeof(symboltable_entry));
     //     entry->values = lifostack_new();
     //     entry->name = (char *) calloc(strlen(id) + 1, sizeof(char));
@@ -44,7 +44,7 @@ void symboltable_push(uint64_t id, Object *o) {
 
 void symboltable_pop(uint64_t id) {
     // symboltable_entry *entry;
-    // hashmap_get(symtable, id, (any_t *) &entry);
+    // hashmap_get(symtable, id, (lifostack_t *) &entry);
     // lifostack_pop(entry->values);
 
     lifostack_pop(symtable[id]);
@@ -53,7 +53,7 @@ void symboltable_pop(uint64_t id) {
 Object *symboltable_find(uint64_t id, char *name) {
     // symboltable_entry *entry;
     // Object *var_val;
-    // int result = hashmap_get(symtable, id, (any_t *) &entry);
+    // int result = hashmap_get(symtable, id, (lifostack_t *) &entry);
     //
     // if (result == MAP_MISSING
     //         || lifostack_length(entry->values) == 0) {
@@ -61,7 +61,7 @@ Object *symboltable_find(uint64_t id, char *name) {
     //     exit(1);
     // }
     //
-    // lifostack_peek(entry->values, (any_t *) &var_val);
+    // lifostack_peek(entry->values, (lifostack_t *) &var_val);
     //
     // return var_val;
 
@@ -74,16 +74,16 @@ Object *symboltable_find(uint64_t id, char *name) {
     }
 
     Object *var_val;
-    lifostack_peek(symtable[id], (any_t *) &var_val);
+    lifostack_peek(symtable[id], (lifostack_t *) &var_val);
 
     return var_val;
 }
 
-// int symboltable_copy_entry(any_t item, any_t first, any_t second) {
+// int symboltable_copy_entry(lifostack_t item, any_t first, any_t second) {
 //     Object* val;
 //     symboltable_entry *entry = (symboltable_entry*)second;
 //     if(lifostack_length(entry->values) != 0) {
-//         lifostack_peek(entry->values, (any_t *) &val);
+//         lifostack_peek(entry->values, (lifostack_t *) &val);
 //         hashmap_put((map_t)item, first, val);
 //     }
 //     return 0;
@@ -96,7 +96,7 @@ Object *symboltable_find(uint64_t id, char *name) {
 void symboltable_copy(env_t env) {
     for(uint64_t i = 0; i < symtable_size; ++i) {
         if(lifostack_length(symtable[i]) != 0) {
-            lifostack_peek(symtable[i], (any_t *) &env[i]);
+            lifostack_peek(symtable[i], (lifostack_t *) &env[i]);
         }
     }
 }

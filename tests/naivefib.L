@@ -5,4 +5,4 @@ fun fib with n =
         (fib (n - 1)) + (fib (n - 2))
 in
 
-(fib 30)
+(fib 32)

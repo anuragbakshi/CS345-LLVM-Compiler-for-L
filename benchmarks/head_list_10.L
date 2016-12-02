@@ -1,0 +1,12 @@
+let list = 1@2 in
+let _ = !list in
+let _ = !list in
+let _ = !list in
+let _ = !list in
+let _ = !list in
+let _ = !list in
+let _ = !list in
+let _ = !list in
+let _ = !list in
+let _ = !list in
+0
