@@ -3,7 +3,8 @@ To build the compiler:
 1. sudo apt-get install llvm
 2. sudo apt-get install flex
 3. sudo apt-get install bison
-4. make
+4. sudo apt-get install lib32z1-dev
+5. make
 
 To compile and run a ELF executable for an L source file of the name file.L:
 1. make file.elf
